@@ -1,0 +1,22 @@
+// Single source of truth for the DB schema (§33). Change only via `npm run db:migrate`.
+// Model conventions: .claude/rules/prisma.md; table list: .claude/docs/spec/infra.md §32.
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Key-value store for admin Settings (§13, permission `settings.manage`); typed per key in the service.
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("settings")
+}

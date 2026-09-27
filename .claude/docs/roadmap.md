@@ -47,7 +47,7 @@
 - ✅ `npm run infra:up` → усі контейнери healthy; Meilisearch UI :7700, MinIO :9001, Mailpit :8025 відкриваються.
 
 ## Етап 4. Фундамент backend 🤖 (M)
-- [ ] 4.1 Prisma підключено до NestJS (PrismaModule), перша міграція.
+- [x] 4.1 Prisma підключено до NestJS (PrismaModule), перша міграція.
 - [ ] 4.2 Structured logging (pino) + `requestId` у кожному запиті та відповіді.
 - [ ] 4.3 Глобальна валідація, єдиний формат помилок, exception filter.
 - [ ] 4.4 `/health`, `/health/ready` (Postgres, Redis, Meilisearch).

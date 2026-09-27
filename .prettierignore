@@ -7,3 +7,5 @@ package-lock.json
 .claude/docs/source
 .claude
 .husky
+apps/api/src/generated
+apps/api/prisma/migrations/**/migration.sql
