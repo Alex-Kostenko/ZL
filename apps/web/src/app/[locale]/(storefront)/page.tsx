@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@ml/ui/components/card
 import { Input } from '@ml/ui/components/input';
 import { Label } from '@ml/ui/components/label';
 import { Search } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import { api } from '@/lib/api';
 
 // Rendered per request: the API is not reachable at build time (CI, Docker build).
@@ -33,31 +34,30 @@ async function getApiStatus(): Promise<ReadinessDto | null> {
   }
 }
 
-// Temporary design-token showcase; the real home page is built in step 8.7.
+// Temporary design-token showcase (demo strings stay untranslated); the real home page is built in 8.7.
 export default async function HomePage() {
+  const t = await getTranslations('home');
   const status = await getApiStatus();
 
   return (
     <>
       <section className="bg-hero text-white">
         <div className="container-page section">
-          <p className="eyebrow">Полювання · Риболовля · Туризм</p>
+          <p className="eyebrow">{t('eyebrow')}</p>
           <h1 className="mt-4 max-w-2xl text-4xl leading-tight font-bold text-white md:text-5xl">
-            Спорядження, якому довіряють.
+            {t('title')}
           </h1>
-          <p className="mt-4 max-w-xl text-sand">
-            50 000+ товарів і 500+ брендів для полювання, риболовлі та активного відпочинку.
-          </p>
+          <p className="mt-4 max-w-xl text-sand">{t('lead')}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button size="lg" className="bg-white text-ink hover:bg-sand">
-              До каталогу
+              {t('toCatalog')}
             </Button>
             <Button
               size="lg"
               variant="outline"
               className="border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white dark:border-white/40 dark:bg-transparent dark:hover:bg-white/10"
             >
-              Бренди
+              {t('brands')}
             </Button>
           </div>
         </div>
@@ -107,9 +107,9 @@ export default async function HomePage() {
 
         <Card>
           <CardHeader>
-            <p className="eyebrow">Система</p>
+            <p className="eyebrow">{t('system')}</p>
             <CardTitle className="font-serif text-2xl">
-              API: {status ? (status.status === 'ok' ? 'працює' : 'є проблеми') : 'недоступний'}
+              {t(status ? (status.status === 'ok' ? 'apiOk' : 'apiDegraded') : 'apiDown')}
             </CardTitle>
           </CardHeader>
           {status && (
@@ -119,7 +119,9 @@ export default async function HomePage() {
                   <li key={key} className="flex justify-between">
                     <span>{CHECK_LABELS[key as keyof typeof CHECK_LABELS]}</span>
                     <span className={check.status === 'up' ? 'text-primary' : 'text-destructive'}>
-                      {check.status === 'up' ? `✓ ${check.latencyMs} мс` : `✗ ${check.error ?? ''}`}
+                      {check.status === 'up'
+                        ? t('latency', { ms: check.latencyMs })
+                        : `✗ ${check.error ?? ''}`}
                     </span>
                   </li>
                 ))}

@@ -9,22 +9,23 @@ import {
   DropdownMenuTrigger,
 } from '@ml/ui/components/dropdown-menu';
 import { Monitor, Moon, Sun } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 
-// TODO(8.3): labels move to i18n messages.
 const THEMES = [
-  { value: 'light', label: 'Світла', icon: Sun },
-  { value: 'dark', label: 'Темна', icon: Moon },
-  { value: 'system', label: 'Як у системі', icon: Monitor },
+  { value: 'light', icon: Sun },
+  { value: 'dark', icon: Moon },
+  { value: 'system', icon: Monitor },
 ] as const;
 
 export function ThemeToggle() {
+  const t = useTranslations('theme');
   const { theme, setTheme } = useTheme();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Тема оформлення">
+        <Button variant="ghost" size="icon" aria-label={t('label')}>
           {/* Icon is chosen by CSS: the resolved theme is unknown during SSR. */}
           <Sun className="dark:hidden" />
           <Moon className="hidden dark:block" />
@@ -32,10 +33,10 @@ export function ThemeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-          {THEMES.map(({ value, label, icon: Icon }) => (
+          {THEMES.map(({ value, icon: Icon }) => (
             <DropdownMenuRadioItem key={value} value={value}>
               <Icon />
-              {label}
+              {t(value)}
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>

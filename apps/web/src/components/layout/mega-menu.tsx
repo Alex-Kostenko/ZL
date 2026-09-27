@@ -3,7 +3,8 @@
 import type { CategoryNodeDto } from '@ml/api-client';
 import { cn } from '@ml/ui/lib/utils';
 import { ChevronDown } from 'lucide-react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { NavigationMenu as Nav } from 'radix-ui';
 import { categoryHref } from '@/lib/routes';
 import type { NavLink } from './nav-links';
@@ -17,8 +18,9 @@ const itemClass =
  * works before hydration) and only hidden while closed.
  */
 export function MegaMenu({ tree, links }: { tree: CategoryNodeDto[]; links: NavLink[] }) {
+  const t = useTranslations('layout');
   return (
-    <Nav.Root delayDuration={150} aria-label="Каталог">
+    <Nav.Root delayDuration={150} aria-label={t('catalog')}>
       <Nav.List className="container-page flex items-center [&>li:first-child]:-ml-3">
         {tree.map((root) => (
           <Nav.Item key={root.id} value={root.id}>
@@ -52,11 +54,12 @@ export function MegaMenu({ tree, links }: { tree: CategoryNodeDto[]; links: NavL
 }
 
 function CategoryPanel({ root }: { root: CategoryNodeDto }) {
+  const t = useTranslations('layout');
   return (
     <div className="container-page max-h-[calc(100vh-9rem)] overflow-y-auto py-8">
       <Nav.Link asChild>
         <Link href={categoryHref(root.path)} className="eyebrow hover:underline">
-          Усі товари: {root.name}
+          {t('allProductsOf', { name: root.name })}
         </Link>
       </Nav.Link>
       <ul className="mt-5 columns-2 gap-8 lg:columns-3 xl:columns-4">

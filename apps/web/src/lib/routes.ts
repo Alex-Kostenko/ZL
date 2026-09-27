@@ -1,4 +1,4 @@
 // Storefront URL builders. Safe for client components (no server-only imports).
-// TODO(8.3): locale prefix for ru/en (decision 1.4).
+// Paths are locale-free: render them with `Link` from `@/i18n/navigation`, which adds /ru, /en.
 
 export const categoryHref = (path: string) => `/category/${path}`;

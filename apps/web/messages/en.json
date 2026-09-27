@@ -1,0 +1,62 @@
+{
+  "meta": {
+    "siteName": "Myslyvska Lavka",
+    "description": "Gear for hunting, fishing and the outdoors"
+  },
+  "layout": {
+    "skipToContent": "Skip to content",
+    "catalog": "Catalog",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "allProducts": "All products",
+    "allProductsOf": "All products: {name}",
+    "allOf": "All: {name}"
+  },
+  "nav": {
+    "antidron": "Anti-drone",
+    "sale": "Sale",
+    "brands": "Brands",
+    "blog": "News",
+    "blogFull": "News and articles",
+    "delivery": "Delivery",
+    "payment": "Payment",
+    "warranty": "Warranty and returns",
+    "contacts": "Contacts",
+    "about": "About us",
+    "account": "My account",
+    "cart": "Cart"
+  },
+  "search": {
+    "label": "Search products",
+    "placeholder": "Search: name, brand or SKU",
+    "submit": "Search"
+  },
+  "footer": {
+    "tagline": "Gear you can trust.",
+    "about": "Gear for hunting, fishing and the outdoors: 50,000+ products, 500+ brands.",
+    "catalog": "Catalog",
+    "customers": "Customer service",
+    "useful": "More"
+  },
+  "theme": {
+    "label": "Color theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "label": "Language"
+  },
+  "home": {
+    "eyebrow": "Hunting · Fishing · Outdoors",
+    "title": "Gear you can trust.",
+    "lead": "50,000+ products and 500+ brands for hunting, fishing and the outdoors.",
+    "toCatalog": "Shop the catalog",
+    "brands": "Brands",
+    "system": "System",
+    "apiOk": "API: up",
+    "apiDegraded": "API: degraded",
+    "apiDown": "API: unreachable",
+    "latency": "✓ {ms} ms"
+  }
+}

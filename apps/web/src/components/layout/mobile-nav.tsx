@@ -18,7 +18,8 @@ import {
 } from '@ml/ui/components/sheet';
 import { cn } from '@ml/ui/lib/utils';
 import { Menu } from 'lucide-react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import type { ReactNode } from 'react';
 import { categoryHref } from '@/lib/routes';
 import type { NavLink } from './nav-links';
@@ -33,23 +34,25 @@ export function MobileNav({
   showcase: NavLink[];
   info: NavLink[];
 }) {
+  const t = useTranslations('layout');
+  const tMeta = useTranslations('meta');
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Меню" className="-ml-2 lg:hidden">
+        <Button variant="ghost" size="icon" aria-label={t('menu')} className="-ml-2 lg:hidden">
           <Menu className="size-5" />
         </Button>
       </SheetTrigger>
       <SheetContent
         side="left"
-        closeLabel="Закрити меню"
+        closeLabel={t('closeMenu')}
         className="w-[88vw] gap-0 p-0 sm:max-w-sm"
       >
         <SheetHeader className="border-b px-5 py-4">
-          <SheetTitle className="font-serif text-lg">Мисливська лавка</SheetTitle>
+          <SheetTitle className="font-serif text-lg">{tMeta('siteName')}</SheetTitle>
         </SheetHeader>
 
-        <nav aria-label="Каталог" className="flex-1 overflow-y-auto px-5 pb-8">
+        <nav aria-label={t('catalog')} className="flex-1 overflow-y-auto px-5 pb-8">
           <Accordion type="single" collapsible>
             {tree.map((root) => (
               <AccordionItem key={root.id} value={root.id}>
@@ -58,7 +61,7 @@ export function MobileNav({
                 </AccordionTrigger>
                 <AccordionContent className="pb-3">
                   <DrawerLink href={categoryHref(root.path)} className="eyebrow py-2">
-                    Усі товари
+                    {t('allProducts')}
                   </DrawerLink>
                   <Accordion type="single" collapsible>
                     {root.children.map((group) =>
@@ -69,7 +72,7 @@ export function MobileNav({
                           </AccordionTrigger>
                           <AccordionContent className="border-l pb-2 pl-4">
                             <DrawerLink href={categoryHref(group.path)} className="font-medium">
-                              Усі: {group.name}
+                              {t('allOf', { name: group.name })}
                             </DrawerLink>
                             {group.children.map((leaf) => (
                               <DrawerLink
