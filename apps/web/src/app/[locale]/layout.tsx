@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Merriweather } from 'next/font/google';
 import { notFound } from 'next/navigation';
+import { loadWebEnv } from '@ml/config';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
@@ -27,7 +28,12 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) return {};
   const t = await getTranslations({ locale, namespace: 'meta' });
-  return { title: t('siteName'), description: t('description') };
+  return {
+    // Resolves relative canonical/alternate/OG URLs of every page to absolute ones.
+    metadataBase: new URL(loadWebEnv().WEB_URL),
+    title: t('siteName'),
+    description: t('description'),
+  };
 }
 
 // Browser UI color follows the OS scheme (matches --background of each theme).

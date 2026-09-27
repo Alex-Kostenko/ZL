@@ -58,5 +58,64 @@
     "apiDegraded": "API: есть проблемы",
     "apiDown": "API: недоступен",
     "latency": "✓ {ms} мс"
+  },
+  "breadcrumbs": {
+    "label": "Навигационная цепочка",
+    "home": "Главная"
+  },
+  "listing": {
+    "products": "{count, plural, one {# товар} few {# товара} many {# товаров} other {# товара}}",
+    "sortLabel": "Сортировка",
+    "sort": {
+      "relevance": "Рекомендуемые",
+      "price_asc": "Сначала дешевле",
+      "price_desc": "Сначала дороже",
+      "newest": "Новинки",
+      "title": "По названию"
+    },
+    "filters": "Фильтры",
+    "clearAll": "Сбросить всё",
+    "showResults": "Показать {count, plural, one {# товар} few {# товара} many {# товаров} other {# товара}}",
+    "removeFilter": "Убрать фильтр: {name}",
+    "availability": "Наличие",
+    "inStock": "Есть в наличии",
+    "sale": "Распродажа",
+    "antidron": "Антидрон",
+    "brand": "Бренд",
+    "price": "Цена",
+    "from": "от",
+    "to": "до",
+    "apply": "Применить",
+    "rangeFrom": "от {value}",
+    "rangeTo": "до {value}",
+    "showAll": "Показать все ({count})",
+    "showLess": "Свернуть",
+    "findBrand": "Найти бренд",
+    "nothingFound": "Ничего не найдено",
+    "emptyTitle": "Товары не найдены",
+    "emptyFiltered": "Попробуйте убрать часть фильтров.",
+    "emptyCategory": "В этом разделе пока нет товаров.",
+    "degraded": "Поиск временно работает в упрощённом режиме: показаны новейшие товары, фильтры по цене и характеристикам и сортировка сейчас не действуют.",
+    "closeFilters": "Закрыть фильтры"
+  },
+  "product": {
+    "inStock": "В наличии",
+    "outOfStock": "Нет в наличии",
+    "priceFrom": "от {price}",
+    "noPrice": "Цену уточняйте",
+    "oldPrice": "Старая цена",
+    "noImage": "Фото скоро"
+  },
+  "pagination": {
+    "label": "Страницы",
+    "previous": "Предыдущая",
+    "next": "Следующая",
+    "page": "Страница {page}"
+  },
+  "category": {
+    "metaTitle": "{name} — купить в Мисливській лавці",
+    "metaDescription": "{name}: {count, plural, one {# товар} few {# товара} many {# товаров} other {# товара}} с ценами и наличием. Доставка по Украине.",
+    "pageSuffix": "страница {page}",
+    "subcategories": "Подкатегории"
   }
 }

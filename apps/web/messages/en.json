@@ -58,5 +58,64 @@
     "apiDegraded": "API: degraded",
     "apiDown": "API: unreachable",
     "latency": "✓ {ms} ms"
+  },
+  "breadcrumbs": {
+    "label": "Breadcrumb",
+    "home": "Home"
+  },
+  "listing": {
+    "products": "{count, plural, one {# product} other {# products}}",
+    "sortLabel": "Sort by",
+    "sort": {
+      "relevance": "Recommended",
+      "price_asc": "Price: low to high",
+      "price_desc": "Price: high to low",
+      "newest": "Newest",
+      "title": "Name"
+    },
+    "filters": "Filters",
+    "clearAll": "Clear all",
+    "showResults": "Show {count, plural, one {# product} other {# products}}",
+    "removeFilter": "Remove filter: {name}",
+    "availability": "Availability",
+    "inStock": "In stock",
+    "sale": "Sale",
+    "antidron": "Anti-drone",
+    "brand": "Brand",
+    "price": "Price",
+    "from": "from",
+    "to": "to",
+    "apply": "Apply",
+    "rangeFrom": "from {value}",
+    "rangeTo": "up to {value}",
+    "showAll": "Show all ({count})",
+    "showLess": "Show less",
+    "findBrand": "Find a brand",
+    "nothingFound": "Nothing found",
+    "emptyTitle": "No products found",
+    "emptyFiltered": "Try removing some filters.",
+    "emptyCategory": "There are no products in this category yet.",
+    "degraded": "Search is temporarily running in a limited mode: the newest products are shown; price and attribute filters and sorting are unavailable.",
+    "closeFilters": "Close filters"
+  },
+  "product": {
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
+    "priceFrom": "from {price}",
+    "noPrice": "Price on request",
+    "oldPrice": "Old price",
+    "noImage": "Photo coming soon"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page}"
+  },
+  "category": {
+    "metaTitle": "{name} — buy at Myslyvska Lavka",
+    "metaDescription": "{name}: {count, plural, one {# product} other {# products}} with prices and availability. Delivery across Ukraine.",
+    "pageSuffix": "page {page}",
+    "subcategories": "Subcategories"
   }
 }

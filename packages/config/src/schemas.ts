@@ -58,6 +58,8 @@ export const webEnvSchema = z.object({
   NODE_ENV: nodeEnv,
   API_URL: z.url(),
   WEB_URL: z.url(),
+  /** Public media origin (MinIO / CloudFront); allowed as a next/image source. */
+  S3_PUBLIC_URL: z.url(),
 });
 
 export type WebEnv = z.infer<typeof webEnvSchema>;

@@ -18,11 +18,19 @@ const withNextIntl = createNextIntlPlugin();
 
 export default function config(phase: string): NextConfig {
   // Fail fast on missing/invalid env; tooling phases (typegen, lint) don't need it.
-  if (RUNTIME_PHASES.has(phase)) loadWebEnv();
+  const env = RUNTIME_PHASES.has(phase) ? loadWebEnv() : null;
 
   return withNextIntl({
     reactStrictMode: true,
     poweredByHeader: false,
+    // Agent rules live in .claude/rules/web.md; don't let `next dev` write AGENTS.md/CLAUDE.md here.
+    agentRules: false,
     transpilePackages: ['@ml/ui'],
+    images: {
+      formats: ['image/avif', 'image/webp'],
+      remotePatterns: env ? [new URL(`${env.S3_PUBLIC_URL.replace(/\/$/, '')}/**`)] : [],
+      // Dev media is served by MinIO on localhost, which the optimizer blocks by default.
+      dangerouslyAllowLocalIP: env?.NODE_ENV === 'development',
+    },
   });
 }

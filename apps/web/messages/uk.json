@@ -58,5 +58,64 @@
     "apiDegraded": "API: є проблеми",
     "apiDown": "API: недоступний",
     "latency": "✓ {ms} мс"
+  },
+  "breadcrumbs": {
+    "label": "Навігаційний ланцюжок",
+    "home": "Головна"
+  },
+  "listing": {
+    "products": "{count, plural, one {# товар} few {# товари} many {# товарів} other {# товару}}",
+    "sortLabel": "Сортування",
+    "sort": {
+      "relevance": "Рекомендовані",
+      "price_asc": "Спочатку дешевші",
+      "price_desc": "Спочатку дорожчі",
+      "newest": "Новинки",
+      "title": "За назвою"
+    },
+    "filters": "Фільтри",
+    "clearAll": "Скинути все",
+    "showResults": "Показати {count, plural, one {# товар} few {# товари} many {# товарів} other {# товару}}",
+    "removeFilter": "Прибрати фільтр: {name}",
+    "availability": "Наявність",
+    "inStock": "Є в наявності",
+    "sale": "Розпродаж",
+    "antidron": "Антидрон",
+    "brand": "Бренд",
+    "price": "Ціна",
+    "from": "від",
+    "to": "до",
+    "apply": "Застосувати",
+    "rangeFrom": "від {value}",
+    "rangeTo": "до {value}",
+    "showAll": "Показати всі ({count})",
+    "showLess": "Згорнути",
+    "findBrand": "Знайти бренд",
+    "nothingFound": "Нічого не знайдено",
+    "emptyTitle": "Товарів не знайдено",
+    "emptyFiltered": "Спробуйте прибрати частину фільтрів.",
+    "emptyCategory": "У цьому розділі поки немає товарів.",
+    "degraded": "Пошук тимчасово працює в спрощеному режимі: показано найновіші товари, фільтри за ціною й характеристиками та сортування зараз не діють.",
+    "closeFilters": "Закрити фільтри"
+  },
+  "product": {
+    "inStock": "В наявності",
+    "outOfStock": "Немає в наявності",
+    "priceFrom": "від {price}",
+    "noPrice": "Ціну уточнюйте",
+    "oldPrice": "Стара ціна",
+    "noImage": "Фото незабаром"
+  },
+  "pagination": {
+    "label": "Сторінки",
+    "previous": "Попередня",
+    "next": "Наступна",
+    "page": "Сторінка {page}"
+  },
+  "category": {
+    "metaTitle": "{name} — купити в Мисливській лавці",
+    "metaDescription": "{name}: {count, plural, one {# товар} few {# товари} many {# товарів} other {# товару}} з цінами й наявністю. Доставка по Україні.",
+    "pageSuffix": "сторінка {page}",
+    "subcategories": "Підкатегорії"
   }
 }
