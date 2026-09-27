@@ -9,6 +9,7 @@ import { type Locale, routing } from '@/i18n/routing';
 import { groupByLetter } from '@/lib/brands';
 import { getBrands } from '@/lib/catalog';
 import { brandHref } from '@/lib/routes';
+import { socialMetadata } from '@/lib/seo';
 
 // Rendered per request until ISR lands in 8.9: the API is not reachable at build time.
 export const dynamic = 'force-dynamic';
@@ -27,10 +28,13 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     getTranslations({ locale, namespace: 'brands' }),
     getBrands(locale),
   ]);
+  const title = t('metaTitle');
+  const description = t('metaDescription', { count: brands.length });
   return {
-    title: t('metaTitle'),
-    description: t('metaDescription', { count: brands.length }),
+    title,
+    description,
     alternates: { canonical: getPathname({ href: '/brands', locale }) },
+    ...(await socialMetadata({ locale, href: '/brands', title, description })),
   };
 }
 

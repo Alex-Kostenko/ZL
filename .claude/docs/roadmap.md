@@ -91,7 +91,7 @@
 - [x] 8.5 Картка товару: галерея, характеристики, варіанти, наявність, ціна, related.
 - [x] 8.6 Бренди, сторінка бренду, `/sale`, `/antidron`, `/search` з autocomplete.
 - [x] 8.7 Головна (поки статична, у етапі 13 — з CMS), статичні сторінки (about, delivery...).
-- [ ] 8.8 Базове SEO: metadata, breadcrumbs, JSON-LD Product/Offer/BreadcrumbList.
+- [x] 8.8 Базове SEO: metadata, breadcrumbs, JSON-LD Product/Offer/BreadcrumbList.
 - [ ] 8.9 ISR/кешування + перевірка Lighthouse (LCP < 2.5 s, CLS < 0.1).
 - ✅ Можна пройти головна → категорія → фільтр → товар → бренд → пошук на телефоні й ПК; Lighthouse ≥ 90.
 

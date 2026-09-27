@@ -2,20 +2,26 @@ import type { ProductAttributeDto, ProductDetailDto, ProductListItemDto } from '
 import { Badge } from '@ml/ui/components/badge';
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
-import { hasLocale, useTranslations } from 'next-intl';
+import { hasLocale, useLocale, useTranslations } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { JsonLd } from '@/components/json-ld';
 import { ProductRail } from '@/components/catalog/product-rail';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { ProductPurchase } from '@/components/product/product-purchase';
 import { VariantProvider } from '@/components/product/variant-context';
 import { getPathname, Link } from '@/i18n/navigation';
-import { routing } from '@/i18n/routing';
+import { type Locale, routing } from '@/i18n/routing';
 import { getProduct, getRelatedProducts } from '@/lib/catalog';
 import { formatPrice } from '@/lib/format';
 import { brandHref, categoryHref, productHref } from '@/lib/routes';
+import { absoluteUrl, socialMetadata } from '@/lib/seo';
+import { productLd } from '@/lib/structured-data';
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
+
+/** Photos offered to social previews (the first one is used by most networks). */
+const OG_IMAGES = 4;
 
 async function resolve({ params }: Props) {
   const { locale, slug: rawSlug } = await params;
@@ -35,15 +41,24 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const { locale, product } = await resolve(props);
   const t = await getTranslations({ locale, namespace: 'product' });
   const price = product.price && formatPrice(product.price.amount, locale, product.price.currency);
+  const description =
+    product.shortDescription ??
+    (price
+      ? t('metaDescriptionPrice', { title: product.title, price })
+      : t('metaDescription', { title: product.title }));
+  const href = productHref(product.slug);
 
   return {
     title: t('metaTitle', { title: product.title }),
-    description:
-      product.shortDescription ??
-      (price
-        ? t('metaDescriptionPrice', { title: product.title, price })
-        : t('metaDescription', { title: product.title })),
-    alternates: { canonical: getPathname({ href: productHref(product.slug), locale }) },
+    description,
+    alternates: { canonical: getPathname({ href, locale }) },
+    ...(await socialMetadata({
+      locale,
+      href,
+      title: product.title,
+      description,
+      images: product.images.slice(0, OG_IMAGES),
+    })),
   };
 }
 
@@ -63,6 +78,8 @@ function ProductView({
 }) {
   const t = useTranslations('product');
   const tListing = useTranslations('listing');
+  const tMeta = useTranslations('meta');
+  const locale = useLocale() as Locale;
   const crumbs = [
     ...product.breadcrumbs.map((crumb) => ({ name: crumb.name, href: categoryHref(crumb.path) })),
     { name: product.title },
@@ -71,6 +88,12 @@ function ProductView({
   return (
     <div className="container-page py-6 lg:py-8">
       <Breadcrumbs items={crumbs} />
+      <JsonLd
+        data={productLd(product, {
+          url: absoluteUrl(productHref(product.slug), locale),
+          sellerName: tMeta('siteName'),
+        })}
+      />
 
       <VariantProvider variants={product.variants}>
         <div className="mt-5 grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-12">

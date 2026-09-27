@@ -37,6 +37,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     state,
     title: t('metaTitle', { name: category.name }),
     description: t('metaDescription', { name: category.name, count: result.total }),
+    image: category.image && { ...category.image, alt: category.name },
   });
 }
 

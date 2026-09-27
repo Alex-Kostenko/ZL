@@ -6,6 +6,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { getPathname, Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
+import { socialMetadata } from '@/lib/seo';
 import { getCategoryTree } from '@/lib/catalog';
 import { categoryHref } from '@/lib/routes';
 
@@ -18,10 +19,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   const t = await getTranslations({ locale, namespace: 'catalog' });
+  const title = t('metaTitle');
+  const description = t('metaDescription');
   return {
-    title: t('metaTitle'),
-    description: t('metaDescription'),
+    title,
+    description,
     alternates: { canonical: getPathname({ href: '/catalog', locale }) },
+    ...(await socialMetadata({ locale, href: '/catalog', title, description })),
   };
 }
 

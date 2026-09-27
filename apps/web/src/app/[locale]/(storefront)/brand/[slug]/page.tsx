@@ -44,6 +44,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     description:
       brand.seo.description ?? t('metaDescription', { name: brand.name, count: result.total }),
     noindex: brand.seo.noindex,
+    image: brand.logo && { ...brand.logo, alt: brand.name },
   });
 }
 

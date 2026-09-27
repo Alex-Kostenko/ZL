@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { getPathname } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
+import { socialMetadata } from '@/lib/seo';
 
 // Static information pages (about, delivery, payment, warranty, contacts). Texts live in the
 // `pages` messages until the CMS takes over (TODO(13.1): Pages from the CMS).
@@ -31,10 +32,13 @@ export async function infoPageMetadata(page: InfoPageKey, props: InfoPageProps):
     getTranslations({ locale, namespace: `pages.${page}` }),
     getTranslations({ locale, namespace: 'meta' }),
   ]);
+  const href = `/${page}`;
+  const description = t('metaDescription');
   return {
     title: `${t('title')} — ${tMeta('siteName')}`,
-    description: t('metaDescription'),
-    alternates: { canonical: getPathname({ href: `/${page}`, locale }) },
+    description,
+    alternates: { canonical: getPathname({ href, locale }) },
+    ...(await socialMetadata({ locale, href, title: t('title'), description })),
   };
 }
 

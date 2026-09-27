@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { getPathname } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
 import { searchListing } from '@/lib/catalog';
+import { type SocialImage, socialMetadata } from '@/lib/seo';
 import {
   type ListingScope,
   type ListingState,
@@ -60,6 +61,7 @@ export async function listingMetadata({
   title,
   description,
   noindex = false,
+  image,
 }: {
   locale: Locale;
   /** Locale-free path, e.g. `/brand/beretta`. */
@@ -69,6 +71,8 @@ export async function listingMetadata({
   description: string;
   /** The page itself is excluded from the index (e.g. a brand hidden by SEO settings). */
   noindex?: boolean;
+  /** Social preview image (category image, brand logo). */
+  image?: SocialImage | null;
 }): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'listing' });
   const seo = listingSeo(state);
@@ -77,5 +81,13 @@ export async function listingMetadata({
     description,
     alternates: { canonical: getPathname({ href: basePath, locale }) + seo.canonicalQuery },
     robots: seo.indexable && !noindex ? undefined : { index: false, follow: true },
+    // Shares point at the canonical listing, not at a filtered or paginated variant.
+    ...(await socialMetadata({
+      locale,
+      href: basePath,
+      title,
+      description,
+      images: image ? [image] : [],
+    })),
   };
 }
