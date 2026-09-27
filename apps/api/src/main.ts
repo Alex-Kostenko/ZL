@@ -5,6 +5,7 @@ import { NestFactory } from '@nestjs/core';
 import { Logger as PinoLogger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { configureApp } from './app.setup';
+import { BULL_BOARD_PATH, setupBullBoard } from './jobs/bull-board';
 import { SWAGGER_PATH, setupSwagger } from './openapi/swagger';
 
 async function bootstrap(): Promise<void> {
@@ -18,13 +19,18 @@ async function bootstrap(): Promise<void> {
 
   configureApp(app);
 
-  const swaggerEnabled = env.NODE_ENV !== 'production';
-  if (swaggerEnabled) setupSwagger(app);
+  // Dev tooling without auth: must not exist in production (rule 12).
+  const devToolsEnabled = env.NODE_ENV !== 'production';
+  if (devToolsEnabled) {
+    setupSwagger(app);
+    setupBullBoard(app);
+  }
 
   await app.listen(env.API_PORT);
   Logger.log(`API listening on http://localhost:${env.API_PORT}/api/v1`, 'Bootstrap');
-  if (swaggerEnabled) {
+  if (devToolsEnabled) {
     Logger.log(`Swagger UI: http://localhost:${env.API_PORT}/${SWAGGER_PATH}`, 'Bootstrap');
+    Logger.log(`Bull Board: http://localhost:${env.API_PORT}${BULL_BOARD_PATH}`, 'Bootstrap');
   }
 }
 

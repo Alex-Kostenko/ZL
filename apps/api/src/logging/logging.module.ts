@@ -48,9 +48,9 @@ const REDACT_PATHS = [
           },
           customLogLevel: (_req, res, err) =>
             err || res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info',
-          // Swagger assets and frequent health probes are noise; failed checks log their own warning.
+          // Swagger/Bull Board assets and frequent health probes are noise; failed checks log their own warning.
           autoLogging: {
-            ignore: (req) => /^\/(api\/docs|health)(\/|-|\?|$)/.test(req.url ?? ''),
+            ignore: (req) => /^\/(api\/docs|api\/queues|health)(\/|-|\?|$)/.test(req.url ?? ''),
           },
         },
       }),
