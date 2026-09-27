@@ -27,6 +27,8 @@ jobs:
           cache: npm
 
       - run: npm ci
+      # Dev-only, non-secret values; @ml/config fails the build if env is missing.
+      - run: cp .env.example .env
       - run: npm run format:check
       - run: npm run lint
       - run: npm run typecheck

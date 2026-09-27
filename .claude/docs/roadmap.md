@@ -36,7 +36,7 @@
 - [x] 2.4 `apps/api` (NestJS), `apps/web` (Next.js App Router + Tailwind) — порожні «hello world».
 - [x] 2.5 Порожні пакети: `ui`, `types`, `validation`, `config`, `api-client`.
 - [x] 2.6 Git hooks (husky + lint-staged): lint і format перед commit.
-- [ ] 2.7 GitHub repo + GitHub Actions: lint → typecheck → test → build на кожен PR.
+- [x] 2.7 GitHub repo + GitHub Actions: lint → typecheck → test → build на кожен PR.
 - ✅ `npm run dev` запускає web (:3000) і api (:4000); `npm run lint && npm run typecheck` зелені; CI зелений.
 
 ## Етап 3. Локальна інфраструктура 🤖 (S)
