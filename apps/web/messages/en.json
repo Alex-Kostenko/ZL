@@ -29,7 +29,15 @@
   "search": {
     "label": "Search products",
     "placeholder": "Search: name, brand or SKU",
-    "submit": "Search"
+    "submit": "Search",
+    "suggestions": "Search suggestions",
+    "products": "Products",
+    "categories": "Categories",
+    "brands": "Brands",
+    "allResults": "All results for “{query}”",
+    "nothingFound": "Nothing found for “{query}”",
+    "unavailable": "Suggestions are temporarily unavailable",
+    "priceFrom": "from {price}"
   },
   "footer": {
     "tagline": "Gear you can trust.",
@@ -96,7 +104,8 @@
     "emptyFiltered": "Try removing some filters.",
     "emptyCategory": "There are no products in this category yet.",
     "degraded": "Search is temporarily running in a limited mode: the newest products are shown; price and attribute filters and sorting are unavailable.",
-    "closeFilters": "Close filters"
+    "closeFilters": "Close filters",
+    "pageSuffix": "page {page}"
   },
   "product": {
     "inStock": "In stock",
@@ -128,7 +137,44 @@
   "category": {
     "metaTitle": "{name} — buy at Myslyvska Lavka",
     "metaDescription": "{name}: {count, plural, one {# product} other {# products}} with prices and availability. Delivery across Ukraine.",
-    "pageSuffix": "page {page}",
     "subcategories": "Subcategories"
+  },
+  "searchPage": {
+    "title": "Search",
+    "resultsTitle": "Search results for “{query}”",
+    "emptyQuery": "Type a product name, brand or SKU in the search box above.",
+    "noResults": "Nothing found for “{query}”. Check the spelling or try a shorter query.",
+    "unavailable": "Search is temporarily unavailable. Try again in a minute or browse the catalogue.",
+    "browseBrands": "Browse brands"
+  },
+  "brands": {
+    "title": "Brands",
+    "metaTitle": "Hunting and fishing brands — Myslyvska Lavka",
+    "metaDescription": "{count, plural, one {# brand} other {# brands}} of hunting, fishing and outdoor gear at Myslyvska Lavka.",
+    "lead": "{count, plural, one {# brand} other {# brands}} in our range.",
+    "index": "Brand index"
+  },
+  "brand": {
+    "metaTitle": "{name} — buy at Myslyvska Lavka",
+    "metaDescription": "{name}: {count, plural, one {# product} other {# products}} with prices and availability. Delivery across Ukraine.",
+    "country": "Country: {country}",
+    "website": "Official website",
+    "empty": "No products from this brand yet."
+  },
+  "showcase": {
+    "sale": {
+      "title": "Sale",
+      "lead": "Discounted gear, clothing and accessories.",
+      "metaTitle": "Sale — discounts on hunting and fishing gear",
+      "metaDescription": "Sale at Myslyvska Lavka: {count, plural, one {# product} other {# products}} on discount. Delivery across Ukraine.",
+      "empty": "No discounted products right now. Check back later."
+    },
+    "antidron": {
+      "title": "Anti-drone",
+      "lead": "Drone protection: anti-drone nets, camouflage, detectors and other gear.",
+      "metaTitle": "Anti-drone — drone protection gear",
+      "metaDescription": "Anti-drone gear at Myslyvska Lavka: {count, plural, one {# product} other {# products}}. Delivery across Ukraine.",
+      "empty": "No products in this section yet."
+    }
   }
 }

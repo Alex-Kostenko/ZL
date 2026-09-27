@@ -33,12 +33,15 @@ export function ProductListing({
   state,
   result,
   hidden,
+  emptyText,
 }: {
   /** Locale-free path of the listing, e.g. `/category/zbroia`. */
   basePath: string;
   state: ListingState;
   result: SearchResultDto;
   hidden?: HiddenFilters;
+  /** Empty state without filters; defaults to "no products in this section". */
+  emptyText?: string;
 }) {
   const t = useTranslations('listing');
   const filtered = activeFilterCount(state) > 0;
@@ -95,7 +98,7 @@ export function ProductListing({
             <div className="rounded-md border border-dashed px-6 py-16 text-center">
               <p className="font-serif text-xl font-bold text-heading">{t('emptyTitle')}</p>
               <p className="mt-2 text-muted-foreground">
-                {filtered ? t('emptyFiltered') : t('emptyCategory')}
+                {filtered ? t('emptyFiltered') : (emptyText ?? t('emptyCategory'))}
               </p>
               {filtered && (
                 <Link

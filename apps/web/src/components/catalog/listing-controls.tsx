@@ -104,7 +104,8 @@ export function SortSelect() {
         className="min-w-48 bg-card"
         data-pending={pending || undefined}
       >
-        <SelectValue />
+        {/* Explicit label: Radix fills an empty SelectValue only after mount (blank in SSR). */}
+        <SelectValue>{t(`sort.${state.sort}`)}</SelectValue>
       </SelectTrigger>
       <SelectContent align="end">
         {LISTING_SORTS.map((sort) => (

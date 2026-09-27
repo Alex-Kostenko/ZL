@@ -2,21 +2,13 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { hasLocale, useTranslations } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { cache } from 'react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { ProductListing } from '@/components/catalog/product-listing';
-import { getPathname, Link } from '@/i18n/navigation';
-import { type Locale, routing } from '@/i18n/routing';
-import { getCategory, searchListing } from '@/lib/catalog';
-import {
-  listingSeo,
-  MAX_PAGE,
-  parseListingParams,
-  pruneUnknownAttrs,
-  type SearchParams,
-  serializeListingParams,
-  toSearchQuery,
-} from '@/lib/listing-params';
+import { Link } from '@/i18n/navigation';
+import { routing } from '@/i18n/routing';
+import { getCategory } from '@/lib/catalog';
+import { loadListing, listingMetadata } from '@/lib/listing-page';
+import type { SearchParams } from '@/lib/listing-params';
 import { categoryHref } from '@/lib/routes';
 
 type Props = {
@@ -24,51 +16,28 @@ type Props = {
   searchParams: Promise<SearchParams>;
 };
 
-/**
- * Category + its listing (products, facets) for the URL. Shared by `generateMetadata` and the page,
- * deduplicated per request. 404 for unknown/hidden categories and for pages past the end.
- */
-const loadPage = cache(async (locale: Locale, path: string, query: string) => {
-  const requested = parseListingParams(Object.fromEntries(new URLSearchParams(query)));
-  if (requested.page > MAX_PAGE) notFound();
-
-  const [category, result] = await Promise.all([
-    getCategory(locale, path),
-    searchListing(toSearchQuery(requested, { category: path }, locale)),
-  ]);
-  if (!category || !result) notFound();
-  if (requested.page > 1 && result.items.length === 0) notFound();
-
-  // Unknown attribute codes (old links, typos) are ignored by the API: drop them from the state too.
-  const state = pruneUnknownAttrs(
-    requested,
-    result.facets.attributes.map((a) => a.code),
-  );
-  return { category, result, state };
-});
-
 async function resolve({ params, searchParams }: Props) {
   const { locale, slug } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   const path = slug.map((s) => decodeURIComponent(s)).join('/');
-  const query = serializeListingParams(parseListingParams(await searchParams));
-  return { locale, path, ...(await loadPage(locale, path, query)) };
+  const [category, listing] = await Promise.all([
+    getCategory(locale, path),
+    loadListing(locale, await searchParams, { category: path }),
+  ]);
+  if (!category) notFound();
+  return { locale, category, ...listing };
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const { locale, category, result, state } = await resolve(props);
   const t = await getTranslations({ locale, namespace: 'category' });
-  const seo = listingSeo(state);
-
-  const title = t('metaTitle', { name: category.name });
-  return {
-    title: state.page > 1 ? `${title} — ${t('pageSuffix', { page: state.page })}` : title,
+  return listingMetadata({
+    locale,
+    basePath: categoryHref(category.path),
+    state,
+    title: t('metaTitle', { name: category.name }),
     description: t('metaDescription', { name: category.name, count: result.total }),
-    alternates: {
-      canonical: getPathname({ href: categoryHref(category.path), locale }) + seo.canonicalQuery,
-    },
-    robots: seo.indexable ? undefined : { index: false, follow: true },
-  };
+  });
 }
 
 export default async function CategoryPage(props: Props) {

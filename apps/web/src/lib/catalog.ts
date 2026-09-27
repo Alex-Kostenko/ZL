@@ -1,4 +1,8 @@
 import {
+  type BrandDetailDto,
+  type BrandListItemDto,
+  brandsBySlug,
+  brandsList,
   categoriesGetByPath,
   categoriesGetTree,
   type CategoryDetailDto,
@@ -9,6 +13,8 @@ import {
   searchFind,
   type SearchFindData,
   type SearchResultDto,
+  searchSuggest,
+  type SuggestResultDto,
 } from '@ml/api-client';
 import { cache } from 'react';
 import { api } from '@/lib/api';
@@ -90,5 +96,34 @@ export async function getRelatedProducts(
     return (result?.items ?? []).filter((item) => item.id !== product.id).slice(0, limit);
   } catch {
     return [];
+  }
+}
+
+/** All brands with products, by name (for `/brands`). */
+export const getBrands = cache(async (locale: Locale): Promise<BrandListItemDto[]> => {
+  const list = orNotFound(await brandsList({ client: api, query: { locale } }));
+  return list?.items ?? [];
+});
+
+/** Brand page header (description, logo, SEO). Shared by `generateMetadata` and the page. */
+export const getBrand = cache(
+  async (locale: Locale, slug: string): Promise<BrandDetailDto | null> =>
+    orNotFound(await brandsBySlug({ client: api, path: { slug }, query: { locale } })),
+);
+
+/**
+ * Autocomplete for the header search. `null` when the API fails (the dropdown just stays empty;
+ * the form still submits to `/search`).
+ */
+export async function getSuggestions(
+  locale: Locale,
+  q: string,
+  limit = 6,
+): Promise<SuggestResultDto | null> {
+  try {
+    const { data } = await searchSuggest({ client: api, query: { locale, q, limit } });
+    return data ?? null;
+  } catch {
+    return null;
   }
 }
