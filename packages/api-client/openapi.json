@@ -1,0 +1,272 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1": {
+      "get": {
+        "operationId": "App_getRoot",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppInfoDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error (unified format, see `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "API info",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "Health_liveness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivenessDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error (unified format, see `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Liveness: the process is up (no dependency checks)",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "Health_readiness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "A dependency is down",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error (unified format, see `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Readiness: PostgreSQL, Redis, Meilisearch reachable",
+        "tags": [
+          "system"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Мисливська лавка API",
+    "description": "REST API `/api/v1`: storefront, admin, integrations.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "AppInfoDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Service name."
+          },
+          "status": {
+            "type": "string",
+            "description": "Always `ok` when the API is reachable."
+          }
+        },
+        "required": [
+          "name",
+          "status"
+        ]
+      },
+      "LivenessDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Always `ok` while the process serves HTTP.",
+            "enum": [
+              "ok"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "DependencyCheckDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down"
+            ]
+          },
+          "latencyMs": {
+            "type": "number",
+            "description": "Round-trip time of the check."
+          },
+          "error": {
+            "type": "string",
+            "description": "Short reason when down (`timeout`, `unreachable`); never contains hosts or credentials."
+          }
+        },
+        "required": [
+          "status",
+          "latencyMs"
+        ]
+      },
+      "ReadinessChecksDto": {
+        "type": "object",
+        "properties": {
+          "database": {
+            "$ref": "#/components/schemas/DependencyCheckDto"
+          },
+          "redis": {
+            "$ref": "#/components/schemas/DependencyCheckDto"
+          },
+          "search": {
+            "$ref": "#/components/schemas/DependencyCheckDto"
+          }
+        },
+        "required": [
+          "database",
+          "redis",
+          "search"
+        ]
+      },
+      "ReadinessDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "description": "`ok` only if every dependency is up; otherwise HTTP 503.",
+            "enum": [
+              "ok",
+              "error"
+            ],
+            "type": "string"
+          },
+          "checks": {
+            "$ref": "#/components/schemas/ReadinessChecksDto"
+          }
+        },
+        "required": [
+          "status",
+          "checks"
+        ]
+      },
+      "ErrorDetailDto": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Dot path of the invalid field, e.g. `address.city` or `items.0.qty`."
+          },
+          "messages": {
+            "description": "Human-readable problems with this field.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "field",
+          "messages"
+        ]
+      },
+      "ErrorResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code."
+          },
+          "code": {
+            "type": "string",
+            "description": "Machine-readable code, e.g. `VALIDATION_FAILED`, `NOT_FOUND`."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable summary; safe to show, never contains internals."
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Correlates with server logs and the `X-Request-Id` header."
+          },
+          "details": {
+            "description": "Per-field problems (validation errors).",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetailDto"
+            }
+          }
+        },
+        "required": [
+          "statusCode",
+          "code",
+          "message",
+          "requestId"
+        ]
+      }
+    }
+  }
+}

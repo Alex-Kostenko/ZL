@@ -37,3 +37,6 @@ next-env.d.ts
 
 # prisma generated client
 apps/api/src/generated/
+
+# openapi export build (npm run api:generate)
+apps/api/dist-openapi/

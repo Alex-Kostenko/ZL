@@ -34,3 +34,6 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      # Generated client must match the API; no DB/Redis needed (Nest preview mode).
+      - name: Check API client is up to date
+        run: npm run api:generate && git diff --exit-code -- packages/api-client

@@ -53,7 +53,7 @@
 - [x] 4.4 `/health`, `/health/ready` (Postgres, Redis, Meilisearch).
 - [x] 4.5 OpenAPI/Swagger на `/api/docs` (тільки dev), версіонування `/api/v1`.
 - [x] 4.6 Redis module + BullMQ (JobsModule) з базовою чергою та `jobId` у логах; Bull Board UI (dev).
-- [ ] 4.7 Генерація `packages/api-client` з OpenAPI (`npm run api:generate`).
+- [x] 4.7 Генерація `packages/api-client` з OpenAPI (`npm run api:generate`).
 - [ ] 4.8 Тестова інфраструктура: Vitest/Jest unit + integration з окремою тестовою БД.
 - ✅ `/health/ready` = ok; Swagger відкривається; web отримує дані через згенерований клієнт; тести зелені.
 

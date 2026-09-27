@@ -22,6 +22,7 @@
     "db:deploy": "npm run db:deploy -w @ml/api",
     "db:reset": "npm run db:reset -w @ml/api",
     "db:studio": "npm run db:studio -w @ml/api",
+    "api:generate": "npm run openapi:export -w @ml/api && npm run generate -w @ml/api-client",
     "infra:up": "docker compose up -d --wait --remove-orphans && docker compose run --rm minio-init",
     "infra:down": "docker compose down",
     "infra:reset": "docker compose down -v --remove-orphans && npm run infra:up",

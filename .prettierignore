@@ -9,3 +9,5 @@ package-lock.json
 .husky
 apps/api/src/generated
 apps/api/prisma/migrations/**/migration.sql
+packages/api-client/src/generated
+packages/api-client/openapi.json

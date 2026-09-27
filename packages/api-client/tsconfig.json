@@ -1,4 +1,8 @@
 {
   "extends": "@ml/tsconfig/library.json",
-  "include": ["src", "tsdown.config.ts"]
+  "compilerOptions": {
+    // The generated client uses fetch/Request/Response; it runs in browsers and Node alike.
+    "lib": ["ES2023", "DOM", "DOM.Iterable"]
+  },
+  "include": ["src", "tsdown.config.ts", "openapi-ts.config.ts"]
 }

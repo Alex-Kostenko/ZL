@@ -2,7 +2,7 @@
   "name": "@ml/api-client",
   "version": "0.0.0",
   "private": true,
-  "description": "API client generated from the OpenAPI spec (step 4.7)",
+  "description": "Typed API client generated from the apps/api OpenAPI spec",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -23,12 +23,14 @@
     "dist"
   ],
   "scripts": {
+    "generate": "openapi-ts",
     "build": "tsdown",
     "dev": "tsdown --watch",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.99.0",
     "@ml/eslint-config": "^0.0.0",
     "@ml/tsconfig": "^0.0.0"
   }
