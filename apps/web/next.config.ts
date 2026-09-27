@@ -26,6 +26,11 @@ export default function config(phase: string): NextConfig {
     // Agent rules live in .claude/rules/web.md; don't let `next dev` write AGENTS.md/CLAUDE.md here.
     agentRules: false,
     transpilePackages: ['@ml/ui'],
+    experimental: {
+      // Tailwind CSS is small: inlining it removes the render-blocking stylesheet request, the
+      // biggest LCP cost on slow mobile connections (Lighthouse, 8.9).
+      inlineCss: true,
+    },
     images: {
       formats: ['image/avif', 'image/webp'],
       remotePatterns: env ? [new URL(`${env.S3_PUBLIC_URL.replace(/\/$/, '')}/**`)] : [],

@@ -17,7 +17,7 @@ import {
   type SuggestResultDto,
 } from '@ml/api-client';
 import { cache } from 'react';
-import { api } from '@/lib/api';
+import { api, CACHE_TAGS, CACHE_TTL, cached } from '@/lib/api';
 import type { Locale } from '@/i18n/routing';
 
 // Server-only: imports the API client (reads env via node:fs).
@@ -29,7 +29,11 @@ import type { Locale } from '@/i18n/routing';
  */
 export const getCategoryTree = cache(async (locale: Locale): Promise<CategoryNodeDto[]> => {
   try {
-    const { data } = await categoriesGetTree({ client: api, query: { locale } });
+    const { data } = await categoriesGetTree({
+      client: api,
+      query: { locale },
+      ...cached(CACHE_TTL.structure, [CACHE_TAGS.categories]),
+    });
     return data?.items ?? [];
   } catch {
     return [];
@@ -54,7 +58,13 @@ function orNotFound<T>({
 /** Category page data (breadcrumbs, subcategories). Shared by `generateMetadata` and the page. */
 export const getCategory = cache(
   async (locale: Locale, path: string): Promise<CategoryDetailDto | null> =>
-    orNotFound(await categoriesGetByPath({ client: api, query: { locale, path } })),
+    orNotFound(
+      await categoriesGetByPath({
+        client: api,
+        query: { locale, path },
+        ...cached(CACHE_TTL.structure, [CACHE_TAGS.categories]),
+      }),
+    ),
 );
 
 /**
@@ -64,6 +74,21 @@ export const getCategory = cache(
 export const searchListing = (query: SearchFindData['query']) =>
   searchListingCached(JSON.stringify(query));
 
+/**
+ * Short product rows (home rails, similar products) from the search API, kept in the Data Cache
+ * like product data. Full listings stay uncached: their filter combinations are unbounded.
+ */
+async function searchProductRow(query: SearchFindData['query']): Promise<ProductListItemDto[]> {
+  const result = orNotFound(
+    await searchFind({
+      client: api,
+      query,
+      ...cached(CACHE_TTL.commerce, [CACHE_TAGS.products]),
+    }),
+  );
+  return result?.items ?? [];
+}
+
 const searchListingCached = cache(async (key: string): Promise<SearchResultDto | null> =>
   orNotFound(await searchFind({ client: api, query: JSON.parse(key) as SearchFindData['query'] })),
 );
@@ -71,7 +96,14 @@ const searchListingCached = cache(async (key: string): Promise<SearchResultDto |
 /** Product page data. Shared by `generateMetadata` and the page. */
 export const getProduct = cache(
   async (locale: Locale, slug: string): Promise<ProductDetailDto | null> =>
-    orNotFound(await productsBySlug({ client: api, path: { slug }, query: { locale } })),
+    orNotFound(
+      await productsBySlug({
+        client: api,
+        path: { slug },
+        query: { locale },
+        ...cached(CACHE_TTL.commerce, [CACHE_TAGS.products, CACHE_TAGS.product(slug)]),
+      }),
+    ),
 );
 
 /**
@@ -85,7 +117,7 @@ export async function getRelatedProducts(
 ): Promise<ProductListItemDto[]> {
   if (!product.category) return [];
   try {
-    const result = await searchListing({
+    const items = await searchProductRow({
       locale,
       category: product.category.path,
       inStock: true,
@@ -93,7 +125,7 @@ export async function getRelatedProducts(
       page: 1,
       limit: limit + 1,
     });
-    return (result?.items ?? []).filter((item) => item.id !== product.id).slice(0, limit);
+    return items.filter((item) => item.id !== product.id).slice(0, limit);
   } catch {
     return [];
   }
@@ -101,14 +133,27 @@ export async function getRelatedProducts(
 
 /** All brands with products, by name (for `/brands`). */
 export const getBrands = cache(async (locale: Locale): Promise<BrandListItemDto[]> => {
-  const list = orNotFound(await brandsList({ client: api, query: { locale } }));
+  const list = orNotFound(
+    await brandsList({
+      client: api,
+      query: { locale },
+      ...cached(CACHE_TTL.structure, [CACHE_TAGS.brands]),
+    }),
+  );
   return list?.items ?? [];
 });
 
 /** Brand page header (description, logo, SEO). Shared by `generateMetadata` and the page. */
 export const getBrand = cache(
   async (locale: Locale, slug: string): Promise<BrandDetailDto | null> =>
-    orNotFound(await brandsBySlug({ client: api, path: { slug }, query: { locale } })),
+    orNotFound(
+      await brandsBySlug({
+        client: api,
+        path: { slug },
+        query: { locale },
+        ...cached(CACHE_TTL.structure, [CACHE_TAGS.brands]),
+      }),
+    ),
 );
 
 /**
@@ -138,7 +183,7 @@ export async function getProductRail(
   limit = 8,
 ): Promise<ProductListItemDto[]> {
   try {
-    const result = await searchListing({
+    return await searchProductRow({
       locale,
       inStock: true,
       sort: 'relevance',
@@ -146,7 +191,6 @@ export async function getProductRail(
       limit,
       ...scope,
     });
-    return result?.items ?? [];
   } catch {
     return [];
   }

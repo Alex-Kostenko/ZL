@@ -9,6 +9,9 @@ import { routing } from '@/i18n/routing';
 import { type ListingPageData, loadListing } from '@/lib/listing-page';
 import { parseListingParams, type SearchParams } from '@/lib/listing-params';
 
+// Query, filters and pages live in the query string: rendered per request, never cached.
+export const dynamic = 'force-dynamic';
+
 type Props = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<SearchParams>;

@@ -40,3 +40,6 @@ apps/api/src/generated/
 
 # openapi export build (npm run api:generate)
 apps/api/dist-openapi/
+
+# seed caches (downloaded test photos)
+apps/api/prisma/seed/.cache/

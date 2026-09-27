@@ -11,8 +11,8 @@ import { getBrands } from '@/lib/catalog';
 import { brandHref } from '@/lib/routes';
 import { socialMetadata } from '@/lib/seo';
 
-// Rendered per request until ISR lands in 8.9: the API is not reachable at build time.
-export const dynamic = 'force-dynamic';
+// ISR: rendered on first visit, refreshed hourly (brand list changes rarely).
+export const revalidate = 3600;
 
 type Props = { params: Promise<{ locale: string }> };
 

@@ -1,7 +1,7 @@
 import { InfoPage, type InfoPageProps, infoPageMetadata } from '@/components/content/info-page';
 
-// Rendered per request until ISR lands in 8.9 (header navigation comes from the API).
-export const dynamic = 'force-dynamic';
+// ISR: rendered on first visit, then served from cache and refreshed hourly (texts + menu).
+export const revalidate = 3600;
 
 export const generateMetadata = (props: InfoPageProps) => infoPageMetadata('warranty', props);
 

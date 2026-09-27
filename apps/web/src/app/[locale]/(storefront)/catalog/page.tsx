@@ -10,8 +10,8 @@ import { socialMetadata } from '@/lib/seo';
 import { getCategoryTree } from '@/lib/catalog';
 import { categoryHref } from '@/lib/routes';
 
-// Rendered per request until ISR lands in 8.9 (the category tree comes from the API).
-export const dynamic = 'force-dynamic';
+// ISR: rendered on first visit, refreshed hourly (category tree changes rarely).
+export const revalidate = 3600;
 
 type Props = { params: Promise<{ locale: string }> };
 

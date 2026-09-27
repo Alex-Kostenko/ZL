@@ -12,9 +12,9 @@ import { socialMetadata } from '@/lib/seo';
 import { getBrands, getCategoryTree, getProductRail } from '@/lib/catalog';
 import { brandHref, categoryHref } from '@/lib/routes';
 
-// Rendered per request until ISR lands in 8.9: the API is not reachable at build time (CI, Docker).
+// ISR: product rails show prices and stock, so the page is refreshed every minute.
 // TODO(13.2): sections, banners and texts from the CMS.
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 const CHILDREN_PER_CATEGORY = 6;
 const TOP_BRANDS = 18;

@@ -13,15 +13,21 @@ import '../globals.css';
 const inter = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-inter', display: 'swap' });
 const merriweather = Merriweather({
   subsets: ['latin', 'cyrillic'],
-  weight: ['400', '700'],
+  // Headings only, all bold (brand.md): one weight keeps the LCP heading's font small.
+  weight: '700',
   variable: '--font-merriweather',
   display: 'swap',
 });
 
 type Props = { children: ReactNode; params: Promise<{ locale: string }> };
 
+/**
+ * No pages are prerendered at build time: the build (CI, Docker) has no API, so a build-time render
+ * would bake empty menus and listings into static HTML. Every page is rendered on its first visit
+ * and then served from the ISR cache for its `revalidate` period (§44, decision 8.9).
+ */
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
+  return [];
 }
 
 export async function generateMetadata({ params }: Omit<Props, 'children'>): Promise<Metadata> {

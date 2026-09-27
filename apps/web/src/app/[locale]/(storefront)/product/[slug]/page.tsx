@@ -20,6 +20,14 @@ import { productLd } from '@/lib/structured-data';
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
+// ISR: each product page is rendered on its first visit and refreshed at most once a minute
+// (price, stock). None are prerendered at build (50k products, no API at build time).
+export const revalidate = 60;
+
+export function generateStaticParams() {
+  return [];
+}
+
 /** Photos offered to social previews (the first one is used by most networks). */
 const OG_IMAGES = 4;
 
