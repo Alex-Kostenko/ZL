@@ -4,5 +4,5 @@
     "outDir": "dist"
   },
   // Typecheck covers tests too; the build (tsconfig.build.json) compiles src only.
-  "include": ["src", "test", "vitest.config.mts"]
+  "include": ["src", "test", "prisma", "vitest.config.mts"]
 }

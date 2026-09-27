@@ -17,7 +17,7 @@ export default defineConfig({
         plugins,
         test: {
           name: 'unit',
-          include: ['src/**/*.spec.ts'],
+          include: ['src/**/*.spec.ts', 'prisma/**/*.spec.ts'],
           env: { NODE_ENV: 'test', LOG_LEVEL: 'silent' },
         },
       },

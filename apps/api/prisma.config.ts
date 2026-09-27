@@ -9,7 +9,7 @@ if (existsSync(rootEnv)) process.loadEnvFile(rootEnv);
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',
-  migrations: { path: 'prisma/migrations' },
+  migrations: { path: 'prisma/migrations', seed: 'tsx prisma/seed/index.ts' },
   // `generate` needs no connection; placeholder keeps it working without a .env (fresh `npm ci`).
   datasource: { url: process.env.DATABASE_URL ?? 'postgresql://placeholder' },
 });

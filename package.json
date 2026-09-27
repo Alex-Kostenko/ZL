@@ -20,6 +20,7 @@
     "db:generate": "npm run db:generate -w @ml/api",
     "db:migrate": "npm run db:migrate -w @ml/api --",
     "db:deploy": "npm run db:deploy -w @ml/api",
+    "db:seed": "npm run db:seed -w @ml/api",
     "db:reset": "npm run db:reset -w @ml/api",
     "db:studio": "npm run db:studio -w @ml/api",
     "api:generate": "npm run openapi:export -w @ml/api && npm run generate -w @ml/api-client",
