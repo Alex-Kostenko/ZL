@@ -519,6 +519,278 @@
           "catalog"
         ]
       }
+    },
+    "/api/v1/search": {
+      "get": {
+        "operationId": "Search_find",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Used when `locale` is absent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.",
+            "schema": {
+              "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})?$",
+              "example": "ru",
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Full-text query; empty = browse (e.g. a category page). Typos and prefixes are tolerated.",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Category slug path; includes all subcategories.",
+            "schema": {
+              "maxLength": 1000,
+              "pattern": "^[a-z0-9-]+(\\/[a-z0-9-]+)*$",
+              "example": "zbroia/vohnepalna-zbroia",
+              "type": "string"
+            }
+          },
+          {
+            "name": "brand",
+            "required": false,
+            "in": "query",
+            "description": "Brand slugs (any of): `?brand=a&brand=b` or `?brand=a,b`.",
+            "schema": {
+              "maxItems": 50,
+              "maxLength": 200,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+              }
+            }
+          },
+          {
+            "name": "priceMin",
+            "required": false,
+            "in": "query",
+            "description": "Lowest selling price, UAH.",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "priceMax",
+            "required": false,
+            "in": "query",
+            "description": "Highest selling price, UAH.",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "inStock",
+            "required": false,
+            "in": "query",
+            "description": "Only products available to buy now.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "sale",
+            "required": false,
+            "in": "query",
+            "description": "Only products of the `/sale` showcase.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "antidron",
+            "required": false,
+            "in": "query",
+            "description": "Only products of the `/antidron` showcase.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "attr",
+            "required": false,
+            "in": "query",
+            "description": "Attribute filters, repeatable; ANDed across attributes, ORed inside one:\n`code:v1,v2` (option codes, text, `true`/`false`) or `code:min..max` (numbers, either side\noptional). Unknown or non-filterable codes are ignored.",
+            "schema": {
+              "maxItems": 30,
+              "maxLength": 500,
+              "example": [
+                "calibre:12-70,20-76",
+                "barrel_length:600..760"
+              ],
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "sort",
+            "required": true,
+            "in": "query",
+            "description": "`relevance` (default; in stock first, then newest when there is no query).",
+            "schema": {
+              "default": "relevance",
+              "type": "string",
+              "enum": [
+                "relevance",
+                "price_asc",
+                "price_desc",
+                "newest",
+                "title"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "description": "1-based page number; `page × limit` ≤ 10 000.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "description": "Page size.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 24,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error (unified format, see `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Full-text search and faceted browsing: filters, sorting, disjunctive facet counts",
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/api/v1/search/suggest": {
+      "get": {
+        "operationId": "Search_suggest",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Used when `locale` is absent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.",
+            "schema": {
+              "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})?$",
+              "example": "ru",
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": true,
+            "in": "query",
+            "description": "What the user has typed so far (prefix of the last word is enough).",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "description": "Products to return.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 20,
+              "default": 6,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuggestResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error (unified format, see `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Autocomplete: top products, categories and brands for typed text",
+        "tags": [
+          "search"
+        ]
+      }
     }
   },
   "info": {
@@ -1482,6 +1754,300 @@
           "isSale",
           "isAntidron",
           "publishedAt"
+        ]
+      },
+      "FacetValueDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "Value to send back in the filter: brand slug, option code, `true`/`false` or text."
+          },
+          "label": {
+            "type": "string",
+            "description": "Display text in the response locale."
+          },
+          "count": {
+            "type": "number",
+            "description": "Matching products with every other filter applied (disjunctive)."
+          },
+          "selected": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "value",
+          "label",
+          "count",
+          "selected"
+        ]
+      },
+      "NumberRangeDto": {
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "min",
+          "max"
+        ]
+      },
+      "SelectedRangeDto": {
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "number",
+            "nullable": true
+          },
+          "max": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "min",
+          "max"
+        ]
+      },
+      "ToggleFacetDto": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "number",
+            "description": "Products that would match with this toggle on."
+          },
+          "selected": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "count",
+          "selected"
+        ]
+      },
+      "AttributeFacetDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "`SELECT`, `MULTI_SELECT`, `STRING`, `BOOLEAN` → `values`; `NUMBER`, `RANGE` → `range`."
+          },
+          "values": {
+            "description": "Options with counts, in the attribute's option order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetValueDto"
+            }
+          },
+          "range": {
+            "nullable": true,
+            "description": "Bounds for a slider: over products matching every other filter.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NumberRangeDto"
+              }
+            ]
+          },
+          "selectedRange": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SelectedRangeDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "unit",
+          "type",
+          "values",
+          "range",
+          "selectedRange"
+        ]
+      },
+      "SearchFacetsDto": {
+        "type": "object",
+        "properties": {
+          "brands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetValueDto"
+            }
+          },
+          "price": {
+            "nullable": true,
+            "description": "Selling-price bounds over products matching every other filter.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NumberRangeDto"
+              }
+            ]
+          },
+          "selectedPrice": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SelectedRangeDto"
+              }
+            ]
+          },
+          "inStock": {
+            "$ref": "#/components/schemas/ToggleFacetDto"
+          },
+          "sale": {
+            "$ref": "#/components/schemas/ToggleFacetDto"
+          },
+          "antidron": {
+            "$ref": "#/components/schemas/ToggleFacetDto"
+          },
+          "attributes": {
+            "description": "Filterable attributes that have values among the matching products (or are selected).",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttributeFacetDto"
+            }
+          }
+        },
+        "required": [
+          "brands",
+          "price",
+          "selectedPrice",
+          "inStock",
+          "sale",
+          "antidron",
+          "attributes"
+        ]
+      },
+      "SearchResultDto": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductListItemDto"
+            }
+          },
+          "page": {
+            "type": "number"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number",
+            "description": "Exact up to 10 000."
+          },
+          "totalPages": {
+            "type": "number"
+          },
+          "facets": {
+            "$ref": "#/components/schemas/SearchFacetsDto"
+          }
+        },
+        "required": [
+          "locale",
+          "query",
+          "items",
+          "page",
+          "limit",
+          "total",
+          "totalPages",
+          "facets"
+        ]
+      },
+      "SuggestCategoryDto": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "name"
+        ]
+      },
+      "SuggestBrandDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "name"
+        ]
+      },
+      "SuggestResultDto": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductListItemDto"
+            }
+          },
+          "categories": {
+            "description": "Up to 5 visible categories whose name contains the query.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuggestCategoryDto"
+            }
+          },
+          "brands": {
+            "description": "Up to 5 brands (with products) whose name contains the query.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuggestBrandDto"
+            }
+          }
+        },
+        "required": [
+          "locale",
+          "query",
+          "products",
+          "categories",
+          "brands"
         ]
       },
       "ErrorDetailDto": {

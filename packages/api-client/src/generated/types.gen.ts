@@ -374,6 +374,113 @@ export type ProductDetailDto = {
   publishedAt: string | null;
 };
 
+export type FacetValueDto = {
+  /**
+   * Value to send back in the filter: brand slug, option code, `true`/`false` or text.
+   */
+  value: string;
+  /**
+   * Display text in the response locale.
+   */
+  label: string;
+  /**
+   * Matching products with every other filter applied (disjunctive).
+   */
+  count: number;
+  selected: boolean;
+};
+
+export type NumberRangeDto = {
+  min: number;
+  max: number;
+};
+
+export type SelectedRangeDto = {
+  min: number | null;
+  max: number | null;
+};
+
+export type ToggleFacetDto = {
+  /**
+   * Products that would match with this toggle on.
+   */
+  count: number;
+  selected: boolean;
+};
+
+export type AttributeFacetDto = {
+  code: string;
+  name: string;
+  unit: string | null;
+  /**
+   * `SELECT`, `MULTI_SELECT`, `STRING`, `BOOLEAN` → `values`; `NUMBER`, `RANGE` → `range`.
+   */
+  type: string;
+  /**
+   * Options with counts, in the attribute's option order.
+   */
+  values: Array<FacetValueDto>;
+  /**
+   * Bounds for a slider: over products matching every other filter.
+   */
+  range: NumberRangeDto | null;
+  selectedRange: SelectedRangeDto | null;
+};
+
+export type SearchFacetsDto = {
+  brands: Array<FacetValueDto>;
+  /**
+   * Selling-price bounds over products matching every other filter.
+   */
+  price: NumberRangeDto | null;
+  selectedPrice: SelectedRangeDto | null;
+  inStock: ToggleFacetDto;
+  sale: ToggleFacetDto;
+  antidron: ToggleFacetDto;
+  /**
+   * Filterable attributes that have values among the matching products (or are selected).
+   */
+  attributes: Array<AttributeFacetDto>;
+};
+
+export type SearchResultDto = {
+  locale: string;
+  query: string;
+  items: Array<ProductListItemDto>;
+  page: number;
+  limit: number;
+  /**
+   * Exact up to 10 000.
+   */
+  total: number;
+  totalPages: number;
+  facets: SearchFacetsDto;
+};
+
+export type SuggestCategoryDto = {
+  path: string;
+  name: string;
+};
+
+export type SuggestBrandDto = {
+  slug: string;
+  name: string;
+};
+
+export type SuggestResultDto = {
+  locale: string;
+  query: string;
+  products: Array<ProductListItemDto>;
+  /**
+   * Up to 5 visible categories whose name contains the query.
+   */
+  categories: Array<SuggestCategoryDto>;
+  /**
+   * Up to 5 brands (with products) whose name contains the query.
+   */
+  brands: Array<SuggestBrandDto>;
+};
+
 export type ErrorDetailDto = {
   /**
    * Dot path of the invalid field, e.g. `address.city` or `items.0.qty`.
@@ -709,3 +816,127 @@ export type ProductsBySlugResponses = {
 };
 
 export type ProductsBySlugResponse = ProductsBySlugResponses[keyof ProductsBySlugResponses];
+
+export type SearchFindData = {
+  body?: never;
+  headers?: {
+    /**
+     * Used when `locale` is absent
+     */
+    'Accept-Language'?: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.
+     */
+    locale?: string;
+    /**
+     * Full-text query; empty = browse (e.g. a category page). Typos and prefixes are tolerated.
+     */
+    q?: string;
+    /**
+     * Category slug path; includes all subcategories.
+     */
+    category?: string;
+    /**
+     * Brand slugs (any of): `?brand=a&brand=b` or `?brand=a,b`.
+     */
+    brand?: Array<string>;
+    /**
+     * Lowest selling price, UAH.
+     */
+    priceMin?: number;
+    /**
+     * Highest selling price, UAH.
+     */
+    priceMax?: number;
+    /**
+     * Only products available to buy now.
+     */
+    inStock?: boolean;
+    /**
+     * Only products of the `/sale` showcase.
+     */
+    sale?: boolean;
+    /**
+     * Only products of the `/antidron` showcase.
+     */
+    antidron?: boolean;
+    /**
+     * Attribute filters, repeatable; ANDed across attributes, ORed inside one:
+     * `code:v1,v2` (option codes, text, `true`/`false`) or `code:min..max` (numbers, either side
+     * optional). Unknown or non-filterable codes are ignored.
+     */
+    attr?: Array<string>;
+    /**
+     * `relevance` (default; in stock first, then newest when there is no query).
+     */
+    sort: 'relevance' | 'price_asc' | 'price_desc' | 'newest' | 'title';
+    /**
+     * 1-based page number; `page × limit` ≤ 10 000.
+     */
+    page: number;
+    /**
+     * Page size.
+     */
+    limit: number;
+  };
+  url: '/api/v1/search';
+};
+
+export type SearchFindErrors = {
+  /**
+   * Error (unified format, see `code`)
+   */
+  default: ErrorResponseDto;
+};
+
+export type SearchFindError = SearchFindErrors[keyof SearchFindErrors];
+
+export type SearchFindResponses = {
+  200: SearchResultDto;
+};
+
+export type SearchFindResponse = SearchFindResponses[keyof SearchFindResponses];
+
+export type SearchSuggestData = {
+  body?: never;
+  headers?: {
+    /**
+     * Used when `locale` is absent
+     */
+    'Accept-Language'?: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.
+     */
+    locale?: string;
+    /**
+     * What the user has typed so far (prefix of the last word is enough).
+     */
+    q: string;
+    /**
+     * Products to return.
+     */
+    limit: number;
+  };
+  url: '/api/v1/search/suggest';
+};
+
+export type SearchSuggestErrors = {
+  /**
+   * Error (unified format, see `code`)
+   */
+  default: ErrorResponseDto;
+};
+
+export type SearchSuggestError = SearchSuggestErrors[keyof SearchSuggestErrors];
+
+export type SearchSuggestResponses = {
+  200: SuggestResultDto;
+};
+
+export type SearchSuggestResponse = SearchSuggestResponses[keyof SearchSuggestResponses];

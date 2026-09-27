@@ -30,6 +30,12 @@ import type {
   ProductsListData,
   ProductsListErrors,
   ProductsListResponses,
+  SearchFindData,
+  SearchFindErrors,
+  SearchFindResponses,
+  SearchSuggestData,
+  SearchSuggestErrors,
+  SearchSuggestResponses,
 } from './types.gen';
 
 export type Options<
@@ -148,5 +154,27 @@ export const productsBySlug = <ThrowOnError extends boolean = false>(
 ): RequestResult<ProductsBySlugResponses, ProductsBySlugErrors, ThrowOnError> =>
   (options.client ?? client).get<ProductsBySlugResponses, ProductsBySlugErrors, ThrowOnError>({
     url: '/api/v1/products/{slug}',
+    ...options,
+  });
+
+/**
+ * Full-text search and faceted browsing: filters, sorting, disjunctive facet counts
+ */
+export const searchFind = <ThrowOnError extends boolean = false>(
+  options: Options<SearchFindData, ThrowOnError>,
+): RequestResult<SearchFindResponses, SearchFindErrors, ThrowOnError> =>
+  (options.client ?? client).get<SearchFindResponses, SearchFindErrors, ThrowOnError>({
+    url: '/api/v1/search',
+    ...options,
+  });
+
+/**
+ * Autocomplete: top products, categories and brands for typed text
+ */
+export const searchSuggest = <ThrowOnError extends boolean = false>(
+  options: Options<SearchSuggestData, ThrowOnError>,
+): RequestResult<SearchSuggestResponses, SearchSuggestErrors, ThrowOnError> =>
+  (options.client ?? client).get<SearchSuggestResponses, SearchSuggestErrors, ThrowOnError>({
+    url: '/api/v1/search/suggest',
     ...options,
   });

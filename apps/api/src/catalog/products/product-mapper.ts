@@ -35,7 +35,7 @@ export interface ImageRow {
 }
 
 /** Labels for BOOLEAN characteristics; unknown locales use `uk`. */
-const BOOLEAN_TEXT: Record<string, readonly [yes: string, no: string]> = {
+export const BOOLEAN_TEXT: Record<string, readonly [yes: string, no: string]> = {
   uk: ['Так', 'Ні'],
   ru: ['Да', 'Нет'],
   en: ['Yes', 'No'],

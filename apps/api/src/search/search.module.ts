@@ -1,12 +1,15 @@
 import type { ApiEnv } from '@ml/config';
 import { Module } from '@nestjs/common';
 import { Meilisearch } from 'meilisearch';
+import { BrandsModule } from '../catalog/brands/brands.module';
 import { CategoriesModule } from '../catalog/categories/categories.module';
 import { InventoryModule } from '../catalog/inventory/inventory.module';
 import { PricingModule } from '../catalog/pricing/pricing.module';
 import { API_ENV } from '../config/config.module';
 import { ProductDocumentsService } from './product-documents.service';
 import { MEILI, ProductIndexService } from './product-index.service';
+import { SearchController } from './search.controller';
+import { SearchService } from './search.service';
 import { SearchIndexProcessor } from './search-index.processor';
 import { SearchIndexer } from './search-indexer.service';
 
@@ -15,7 +18,8 @@ import { SearchIndexer } from './search-indexer.service';
  * The client is lazy (plain HTTP per call), so the API starts even when Meilisearch is down.
  */
 @Module({
-  imports: [CategoriesModule, PricingModule, InventoryModule],
+  imports: [BrandsModule, CategoriesModule, PricingModule, InventoryModule],
+  controllers: [SearchController],
   providers: [
     {
       provide: MEILI,
@@ -28,7 +32,8 @@ import { SearchIndexer } from './search-indexer.service';
     ProductDocumentsService,
     SearchIndexer,
     SearchIndexProcessor,
+    SearchService,
   ],
-  exports: [MEILI, ProductIndexService, ProductDocumentsService, SearchIndexer],
+  exports: [MEILI, ProductIndexService, ProductDocumentsService, SearchIndexer, SearchService],
 })
 export class SearchModule {}

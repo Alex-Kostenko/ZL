@@ -78,7 +78,7 @@
 ## Етап 7. Пошук (Meilisearch) 🤖 (M)
 - [x] 7.1 Схема індексу: title, sku, brand, category, attributes, price, availability; фасети.
 - [x] 7.2 Job повного переіндексування + інкрементальні оновлення після змін товару.
-- [ ] 7.3 `GET /api/v1/search`: typo tolerance, autocomplete, фільтри (категорія, бренд, ціна, атрибути), сортування.
+- [x] 7.3 `GET /api/v1/search`: typo tolerance, autocomplete, фільтри (категорія, бренд, ціна, атрибути), сортування.
 - [ ] 7.4 Category listing теж через Meilisearch (фасетні фільтри), не через важкий SQL.
 - ✅ Повний reindex 50k у фоні; пошук з помилкою («свароскі») знаходить Swarovski; фасети < 50 мс.
 
