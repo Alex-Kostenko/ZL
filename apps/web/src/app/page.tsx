@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@ml/ui/components/card
 import { Input } from '@ml/ui/components/input';
 import { Label } from '@ml/ui/components/label';
 import { Search } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { api } from '@/lib/api';
 
 // Rendered per request: the API is not reachable at build time (CI, Docker build).
@@ -39,6 +40,10 @@ export default async function HomePage() {
 
   return (
     <main>
+      <div className="container-page flex h-14 items-center justify-between">
+        <span className="font-serif text-lg font-bold text-heading">Мисливська лавка</span>
+        <ThemeToggle />
+      </div>
       <section className="bg-hero text-white">
         <div className="container-page section">
           <p className="eyebrow">Полювання · Риболовля · Туризм</p>
@@ -55,7 +60,7 @@ export default async function HomePage() {
             <Button
               size="lg"
               variant="outline"
-              className="border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white"
+              className="border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white dark:border-white/40 dark:bg-transparent dark:hover:bg-white/10"
             >
               Бренди
             </Button>
@@ -97,11 +102,11 @@ export default async function HomePage() {
                 <Input
                   id="demo-search"
                   placeholder="Swarovski Z8i, приціл, вейдерси…"
-                  className="bg-white pl-9"
+                  className="pl-9"
                 />
               </div>
             </div>
-            <p className="font-serif text-2xl font-bold text-ink">12 499 ₴</p>
+            <p className="font-serif text-2xl font-bold text-heading">12 499 ₴</p>
           </CardContent>
         </Card>
 
@@ -118,7 +123,7 @@ export default async function HomePage() {
                 {Object.entries(status.checks).map(([key, check]) => (
                   <li key={key} className="flex justify-between">
                     <span>{CHECK_LABELS[key as keyof typeof CHECK_LABELS]}</span>
-                    <span className={check.status === 'up' ? 'text-steel' : 'text-terracotta'}>
+                    <span className={check.status === 'up' ? 'text-primary' : 'text-destructive'}>
                       {check.status === 'up' ? `✓ ${check.latencyMs} мс` : `✗ ${check.error ?? ''}`}
                     </span>
                   </li>

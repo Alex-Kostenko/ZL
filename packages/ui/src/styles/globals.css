@@ -9,7 +9,7 @@
 /* Class names used by the UI kit itself. */
 @source '../**/*.{ts,tsx}';
 
-/* No dark theme in the brand book: `dark:` only applies inside an explicit `.dark` scope. */
+/* Theme is a class on <html> (next-themes), so the user can override the OS preference. */
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -24,15 +24,20 @@
   --ink: #181b1a;
   --paper: #f5f3ee;
 
-  /* shadcn/ui semantic tokens */
+  /*
+   * Semantic tokens. Components use these, never raw brand colors for surfaces and text,
+   * so they follow the theme. Raw brand colors stay constant (hero, badges, swatches).
+   */
   --background: var(--paper);
   --foreground: #252927;
+  --heading: var(--ink);
   --card: #ffffff;
   --card-foreground: #252927;
   --popover: #ffffff;
   --popover-foreground: #252927;
   --primary: var(--steel);
   --primary-foreground: #ffffff;
+  --primary-hover: var(--steel-dark);
   --secondary: var(--sand-light);
   --secondary-foreground: var(--ink);
   --muted: #ece9e2;
@@ -46,6 +51,36 @@
   --ring: var(--steel);
 
   --radius: 4px;
+}
+
+/*
+ * Dark theme: not in the brand book, derived from it. Surfaces are warm near-blacks around ink,
+ * steel is lightened to keep >= 4.5:1 for text/links (buttons get dark text), terracotta is
+ * lightened for white text on it (4.6:1). Contrast on --background: foreground 14:1, muted 7:1,
+ * primary 6:1, bronze eyebrow 6:1; destructive as text only 3.9:1, so use it for fills/icons.
+ */
+.dark {
+  --background: #141716;
+  --foreground: #e9e6df;
+  --heading: #f5f3ee;
+  --card: #1c201e;
+  --card-foreground: #e9e6df;
+  --popover: #1c201e;
+  --popover-foreground: #e9e6df;
+  --primary: #6d9aaf;
+  --primary-foreground: #0f1413;
+  --primary-hover: #86aec0;
+  --secondary: #2a2f2c;
+  --secondary-foreground: #e9e6df;
+  --muted: #232826;
+  --muted-foreground: #a3a7a2;
+  --accent: #2a2f2c;
+  --accent-foreground: #f5f3ee;
+  --destructive: #b85a40;
+  --destructive-foreground: #ffffff;
+  --border: #2e3431;
+  --input: #3a403d;
+  --ring: #6d9aaf;
 }
 
 @theme inline {
@@ -64,12 +99,14 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-heading: var(--heading);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -99,7 +136,7 @@
   h1,
   h2,
   h3 {
-    @apply font-serif text-ink;
+    @apply font-serif text-heading;
   }
   ::selection {
     @apply bg-sand text-ink;

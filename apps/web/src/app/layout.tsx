@@ -1,6 +1,7 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Merriweather } from 'next/font/google';
 import type { ReactNode } from 'react';
+import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
 
 // Self-hosted at build time by next/font; CSS variables are consumed by @ml/ui tokens.
@@ -17,10 +18,25 @@ export const metadata: Metadata = {
   description: 'Товари для полювання, риболовлі та активного відпочинку',
 };
 
+// Browser UI color follows the OS scheme (matches --background of each theme).
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f5f3ee' },
+    { media: '(prefers-color-scheme: dark)', color: '#141716' },
+  ],
+};
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="uk" className={`${inter.variable} ${merriweather.variable}`}>
-      <body className="min-h-screen antialiased">{children}</body>
+    // suppressHydrationWarning: next-themes sets the theme class on <html> before hydration.
+    <html
+      lang="uk"
+      className={`${inter.variable} ${merriweather.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-screen antialiased">
+        <ThemeProvider defaultTheme="system">{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
