@@ -48,6 +48,72 @@ export type ReadinessDto = {
   checks: ReadinessChecksDto;
 };
 
+export type BrandLogoDto = {
+  url: string;
+  width: number | null;
+  height: number | null;
+};
+
+export type BrandListItemDto = {
+  id: string;
+  slug: string;
+  /**
+   * Proper name, not translated.
+   */
+  name: string;
+  /**
+   * ISO 3166-1 alpha-2, e.g. `US`.
+   */
+  country: string | null;
+  logo: BrandLogoDto | null;
+  /**
+   * Published products of the brand.
+   */
+  productCount: number;
+};
+
+export type BrandListDto = {
+  locale: string;
+  /**
+   * Active brands with at least one published product, by name.
+   */
+  items: Array<BrandListItemDto>;
+};
+
+export type BrandSeoDto = {
+  /**
+   * `null` → the storefront builds it from the template.
+   */
+  title: string | null;
+  description: string | null;
+  noindex: boolean;
+};
+
+export type BrandDetailDto = {
+  id: string;
+  slug: string;
+  /**
+   * Proper name, not translated.
+   */
+  name: string;
+  /**
+   * ISO 3166-1 alpha-2, e.g. `US`.
+   */
+  country: string | null;
+  logo: BrandLogoDto | null;
+  /**
+   * Published products of the brand.
+   */
+  productCount: number;
+  locale: string;
+  website: string | null;
+  /**
+   * In the response locale (falls back to `uk`).
+   */
+  description: string | null;
+  seo: BrandSeoDto;
+};
+
 export type CategoryImageDto = {
   url: string;
   width: number | null;
@@ -412,6 +478,74 @@ export type HealthReadinessResponses = {
 
 export type HealthReadinessResponse = HealthReadinessResponses[keyof HealthReadinessResponses];
 
+export type BrandsListData = {
+  body?: never;
+  headers?: {
+    /**
+     * Used when `locale` is absent
+     */
+    'Accept-Language'?: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.
+     */
+    locale?: string;
+  };
+  url: '/api/v1/brands';
+};
+
+export type BrandsListErrors = {
+  /**
+   * Error (unified format, see `code`)
+   */
+  default: ErrorResponseDto;
+};
+
+export type BrandsListError = BrandsListErrors[keyof BrandsListErrors];
+
+export type BrandsListResponses = {
+  200: BrandListDto;
+};
+
+export type BrandsListResponse = BrandsListResponses[keyof BrandsListResponses];
+
+export type BrandsBySlugData = {
+  body?: never;
+  headers?: {
+    /**
+     * Used when `locale` is absent
+     */
+    'Accept-Language'?: string;
+  };
+  path: {
+    slug: string;
+  };
+  query?: {
+    /**
+     * Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.
+     */
+    locale?: string;
+  };
+  url: '/api/v1/brands/{slug}';
+};
+
+export type BrandsBySlugErrors = {
+  /**
+   * Error (unified format, see `code`)
+   */
+  default: ErrorResponseDto;
+};
+
+export type BrandsBySlugError = BrandsBySlugErrors[keyof BrandsBySlugErrors];
+
+export type BrandsBySlugResponses = {
+  200: BrandDetailDto;
+};
+
+export type BrandsBySlugResponse = BrandsBySlugResponses[keyof BrandsBySlugResponses];
+
 export type CategoriesGetTreeData = {
   body?: never;
   headers?: {
@@ -514,6 +648,14 @@ export type ProductsListData = {
      * Brand slug.
      */
     brand?: string;
+    /**
+     * Only products flagged for the `/sale` showcase.
+     */
+    sale?: boolean;
+    /**
+     * Only products flagged for the `/antidron` showcase.
+     */
+    antidron?: boolean;
   };
   url: '/api/v1/products';
 };

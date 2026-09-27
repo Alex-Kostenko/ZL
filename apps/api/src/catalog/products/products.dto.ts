@@ -1,11 +1,24 @@
-import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min } from 'class-validator';
+import { Transform, type TransformFnParams, Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsString,
+  Matches,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
 import { LocaleQueryDto } from '../../i18n/locale-query.dto';
 import type { BreadcrumbDto } from '../categories/categories.dto';
 import type { StockDto } from '../inventory/inventory.dto';
 import type { PriceDto } from '../pricing/pricing.dto';
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
+/** Query flags arrive as strings; anything but `true`/`false` stays as is and fails validation. */
+const toBoolean = ({ value }: TransformFnParams): unknown =>
+  value === 'true' ? true : value === 'false' ? false : value;
 
 export class ProductImageDto {
   url: string;
@@ -92,6 +105,18 @@ export class ProductListQueryDto extends LocaleQueryDto {
   @MaxLength(200)
   @Matches(SLUG, { message: 'brand must be a slug' })
   brand?: string;
+
+  /** Only products flagged for the `/sale` showcase. */
+  @IsOptional()
+  @Transform(toBoolean)
+  @IsBoolean()
+  sale?: boolean;
+
+  /** Only products flagged for the `/antidron` showcase. */
+  @IsOptional()
+  @Transform(toBoolean)
+  @IsBoolean()
+  antidron?: boolean;
 }
 
 export class ProductSlugParamDto {

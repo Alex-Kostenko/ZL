@@ -107,6 +107,122 @@
         ]
       }
     },
+    "/api/v1/brands": {
+      "get": {
+        "operationId": "Brands_list",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Used when `locale` is absent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.",
+            "schema": {
+              "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})?$",
+              "example": "ru",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandListDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error (unified format, see `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Active brands with published products, by name (brands index)",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/api/v1/brands/{slug}": {
+      "get": {
+        "operationId": "Brands_bySlug",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Used when `locale` is absent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "maxLength": 200,
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.",
+            "schema": {
+              "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})?$",
+              "example": "ru",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandDetailDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error (unified format, see `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Brand page: description, logo, SEO; products via /products?brand=",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
     "/api/v1/categories": {
       "get": {
         "operationId": "Categories_getTree",
@@ -293,6 +409,24 @@
             "schema": {
               "maxLength": 200,
               "type": "string"
+            }
+          },
+          {
+            "name": "sale",
+            "required": false,
+            "in": "query",
+            "description": "Only products flagged for the `/sale` showcase.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "antidron",
+            "required": false,
+            "in": "query",
+            "description": "Only products flagged for the `/antidron` showcase.",
+            "schema": {
+              "type": "boolean"
             }
           }
         ],
@@ -490,6 +624,169 @@
         "required": [
           "status",
           "checks"
+        ]
+      },
+      "BrandLogoDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "width": {
+            "type": "number",
+            "nullable": true
+          },
+          "height": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "url",
+          "width",
+          "height"
+        ]
+      },
+      "BrandListItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Proper name, not translated."
+          },
+          "country": {
+            "type": "string",
+            "nullable": true,
+            "description": "ISO 3166-1 alpha-2, e.g. `US`."
+          },
+          "logo": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BrandLogoDto"
+              }
+            ]
+          },
+          "productCount": {
+            "type": "number",
+            "description": "Published products of the brand."
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "country",
+          "logo",
+          "productCount"
+        ]
+      },
+      "BrandListDto": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          },
+          "items": {
+            "description": "Active brands with at least one published product, by name.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BrandListItemDto"
+            }
+          }
+        },
+        "required": [
+          "locale",
+          "items"
+        ]
+      },
+      "BrandSeoDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "description": "`null` → the storefront builds it from the template."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "noindex": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "noindex"
+        ]
+      },
+      "BrandDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Proper name, not translated."
+          },
+          "country": {
+            "type": "string",
+            "nullable": true,
+            "description": "ISO 3166-1 alpha-2, e.g. `US`."
+          },
+          "logo": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BrandLogoDto"
+              }
+            ]
+          },
+          "productCount": {
+            "type": "number",
+            "description": "Published products of the brand."
+          },
+          "locale": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "In the response locale (falls back to `uk`)."
+          },
+          "seo": {
+            "$ref": "#/components/schemas/BrandSeoDto"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "country",
+          "logo",
+          "productCount",
+          "locale",
+          "website",
+          "description",
+          "seo"
         ]
       },
       "CategoryImageDto": {

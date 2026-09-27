@@ -6,6 +6,12 @@ import type {
   AppGetRootData,
   AppGetRootErrors,
   AppGetRootResponses,
+  BrandsBySlugData,
+  BrandsBySlugErrors,
+  BrandsBySlugResponses,
+  BrandsListData,
+  BrandsListErrors,
+  BrandsListResponses,
   CategoriesGetByPathData,
   CategoriesGetByPathErrors,
   CategoriesGetByPathResponses,
@@ -74,6 +80,28 @@ export const healthReadiness = <ThrowOnError extends boolean = false>(
 ): RequestResult<HealthReadinessResponses, HealthReadinessErrors, ThrowOnError> =>
   (options?.client ?? client).get<HealthReadinessResponses, HealthReadinessErrors, ThrowOnError>({
     url: '/health/ready',
+    ...options,
+  });
+
+/**
+ * Active brands with published products, by name (brands index)
+ */
+export const brandsList = <ThrowOnError extends boolean = false>(
+  options?: Options<BrandsListData, ThrowOnError>,
+): RequestResult<BrandsListResponses, BrandsListErrors, ThrowOnError> =>
+  (options?.client ?? client).get<BrandsListResponses, BrandsListErrors, ThrowOnError>({
+    url: '/api/v1/brands',
+    ...options,
+  });
+
+/**
+ * Brand page: description, logo, SEO; products via /products?brand=
+ */
+export const brandsBySlug = <ThrowOnError extends boolean = false>(
+  options: Options<BrandsBySlugData, ThrowOnError>,
+): RequestResult<BrandsBySlugResponses, BrandsBySlugErrors, ThrowOnError> =>
+  (options.client ?? client).get<BrandsBySlugResponses, BrandsBySlugErrors, ThrowOnError>({
+    url: '/api/v1/brands/{slug}',
     ...options,
   });
 

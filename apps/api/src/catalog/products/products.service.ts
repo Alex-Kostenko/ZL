@@ -87,7 +87,11 @@ export class ProductsService {
   ) {}
 
   async list(locale: string, query: ProductListQueryDto): Promise<ProductListDto> {
-    const where: Prisma.ProductWhereInput = { isPublished: true };
+    const where: Prisma.ProductWhereInput = {
+      isPublished: true,
+      isSale: query.sale,
+      isAntidron: query.antidron,
+    };
     if (query.category) {
       const ids = await this.categories.subtreeIds(query.category);
       if (!ids) throw notFound('Category not found');

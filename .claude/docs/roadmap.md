@@ -70,10 +70,10 @@
 ## Етап 6. Публічний Catalog API 🤖 (M)
 - [x] 6.1 Categories: дерево, за slug-шляхом, breadcrumbs, кеш у Redis + інвалідація.
 - [x] 6.2 Products: список з пагінацією, картка за slug (з варіантами, атрибутами, ціною, наявністю).
-- [ ] 6.3 Brands: список, сторінка бренду; вітрини `/sale`, `/antidron`.
+- [x] 6.3 Brands: список, сторінка бренду; вітрини `/sale`, `/antidron`.
 - [x] 6.4 PricingService (актуальна ціна) і InventoryService (`available`) + unit-тести.
-- [ ] 6.5 Локалізація відповідей (`?locale=` / header) з fallback на `uk`. _(Основа готова в 6.1: `LocaleService`, `LocaleQueryDto`; застосовано до products; лишились brands у 6.3.)_
-- ✅ Swagger показує всі endpoints; картка товару < 100 мс на 50k каталозі; тести на ціни/наявність.
+- [x] 6.5 Локалізація відповідей (`?locale=` / header) з fallback на `uk` (categories, products, brands).
+- ✅ Swagger показує всі endpoints; картка товару < 100 мс на 50k каталозі; тести на ціни/наявність. **Етап виконано** (картка 10–25 мс, бренд 35–50 мс, вітрини 20–45 мс).
 
 ## Етап 7. Пошук (Meilisearch) 🤖 (M)
 - [ ] 7.1 Схема індексу: title, sku, brand, category, attributes, price, availability; фасети.

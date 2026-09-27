@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { CacheModule } from './cache/cache.module';
+import { BrandsModule } from './catalog/brands/brands.module';
 import { CategoriesModule } from './catalog/categories/categories.module';
 import { ProductsModule } from './catalog/products/products.module';
 import { ErrorsModule } from './common/errors/errors.module';
@@ -23,6 +24,7 @@ import { RedisModule } from './redis/redis.module';
     I18nModule,
     JobsModule,
     HealthModule,
+    BrandsModule,
     CategoriesModule,
     ProductsModule,
   ],
