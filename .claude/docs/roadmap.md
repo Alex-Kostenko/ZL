@@ -59,7 +59,7 @@
 
 ## Етап 5. Модель даних каталогу 🤖 (M)
 - [x] 5.1 Prisma: Locale-патерн (`*_translations`), Category (дерево), Brand.
-- [ ] 5.2 Product, ProductVariant, product_categories (+ основна категорія), прапорці `isSale`/`isAntidron`.
+- [x] 5.2 Product, ProductVariant, product_categories (+ основна категорія), прапорці `isSale`/`isAntidron`.
 - [ ] 5.3 Attribute, AttributeValue, ProductAttributeValue, category ↔ attributes, provenance-поля (§67.10).
 - [ ] 5.4 Warehouse, Inventory, Price (типи цін, validFrom/To), Media, ProductMedia.
 - [ ] 5.5 integration_mappings, sync_logs, redirects, seo_metadata.
