@@ -58,7 +58,7 @@
 - ✅ `/health/ready` = ok; Swagger відкривається; web отримує дані через згенерований клієнт; тести зелені. **Етап виконано.**
 
 ## Етап 5. Модель даних каталогу 🤖 (M)
-- [ ] 5.1 Prisma: Locale-патерн (`*_translations`), Category (дерево), Brand.
+- [x] 5.1 Prisma: Locale-патерн (`*_translations`), Category (дерево), Brand.
 - [ ] 5.2 Product, ProductVariant, product_categories (+ основна категорія), прапорці `isSale`/`isAntidron`.
 - [ ] 5.3 Attribute, AttributeValue, ProductAttributeValue, category ↔ attributes, provenance-поля (§67.10).
 - [ ] 5.4 Warehouse, Inventory, Price (типи цін, validFrom/To), Media, ProductMedia.

@@ -13,12 +13,16 @@ export async function createTestApp(): Promise<INestApplication> {
   return app;
 }
 
-/** Empties every application table (keeps migration history). Call in `beforeEach`. */
+/** Tables filled by migrations (reference data) that tests must never wipe. */
+const PRESERVED_TABLES = new Set(['_prisma_migrations', 'locales']);
+
+/** Empties every application table (keeps migration history and reference data). Call in `beforeEach`. */
 export async function resetDatabase(prisma: PrismaService): Promise<void> {
-  const tables = await prisma.$queryRaw<{ tablename: string }[]>`
-    SELECT tablename FROM pg_tables
-    WHERE schemaname = 'public' AND tablename <> '_prisma_migrations'`;
+  const rows = await prisma.$queryRaw<{ tablename: string }[]>`
+    SELECT tablename FROM pg_tables WHERE schemaname = 'public'`;
+  const tables = rows.map((r) => r.tablename).filter((t) => !PRESERVED_TABLES.has(t));
   if (tables.length === 0) return;
-  const list = tables.map(({ tablename }) => `"public"."${tablename}"`).join(', ');
-  await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${list} RESTART IDENTITY CASCADE`);
+  const list = tables.map((t) => `"public"."${t}"`).join(', ');
+  // No CASCADE: it would also empty preserved tables referenced by FKs.
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${list} RESTART IDENTITY`);
 }

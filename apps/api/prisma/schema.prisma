@@ -20,3 +20,104 @@ model Setting {
 
   @@map("settings")
 }
+
+// ─── Localization (§59) ──────────────────────────────────────────────────────
+// Every translatable entity has a `<entity>_translations` table keyed by (entityId, locale).
+// Locales are rows, not an enum: adding a language never changes the schema.
+
+/// Supported content languages. Seeded by migration: uk (default), ru, en.
+model Locale {
+  /// BCP 47 code, e.g. `uk`.
+  code      String  @id @db.VarChar(10)
+  name      String
+  isDefault Boolean @default(false) @map("is_default")
+  isActive  Boolean @default(true) @map("is_active")
+  position  Int     @default(0)
+
+  categoryTranslations CategoryTranslation[]
+  brandTranslations    BrandTranslation[]
+
+  @@map("locales")
+}
+
+// ─── Catalog: categories (§5) ────────────────────────────────────────────────
+
+/// Unlimited-depth tree: adjacency list (`parentId`) + materialized `path` for URL lookup and
+/// breadcrumbs. `slug` is unique among siblings; `path` (slugs joined by `/`) is globally unique.
+/// `path`/`depth` of the subtree are maintained by the catalog service when a category moves.
+model Category {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  parentId   String?  @map("parent_id") @db.Uuid
+  slug       String   @db.VarChar(200)
+  /// e.g. `zbroia/vohnepalna-zbroia/rushnytsi`; resolves `/category/[...slug]` in one query.
+  path       String   @unique @db.VarChar(1000)
+  depth      Int      @default(0)
+  /// Menu icon identifier (Lucide name), not a file.
+  icon       String?  @db.VarChar(100)
+  position   Int      @default(0)
+  isActive   Boolean  @default(true) @map("is_active")
+  canonical  String?  @db.VarChar(1000)
+  /// Tria id, when the category comes from the ERP.
+  externalId String?  @unique @map("external_id") @db.VarChar(100)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  parent       Category?             @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children     Category[]            @relation("CategoryTree")
+  translations CategoryTranslation[]
+
+  @@index([parentId, position])
+  @@map("categories")
+}
+
+model CategoryTranslation {
+  categoryId     String  @map("category_id") @db.Uuid
+  locale         String  @db.VarChar(10)
+  name           String  @db.VarChar(255)
+  description    String?
+  seoTitle       String? @map("seo_title") @db.VarChar(255)
+  seoDescription String? @map("seo_description") @db.VarChar(500)
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  language Locale   @relation(fields: [locale], references: [code], onDelete: Restrict)
+
+  @@id([categoryId, locale])
+  @@index([locale])
+  @@map("category_translations")
+}
+
+// ─── Catalog: brands (§9) ────────────────────────────────────────────────────
+
+/// Brand name is a proper noun and is not translated; description and SEO texts are.
+model Brand {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  name       String   @db.VarChar(255)
+  slug       String   @unique @db.VarChar(200)
+  /// ISO 3166-1 alpha-2, e.g. `UA`, `US`.
+  country    String?  @db.Char(2)
+  website    String?  @db.VarChar(500)
+  isActive   Boolean  @default(true) @map("is_active")
+  externalId String?  @unique @map("external_id") @db.VarChar(100)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  translations BrandTranslation[]
+
+  @@index([isActive, name])
+  @@map("brands")
+}
+
+model BrandTranslation {
+  brandId        String  @map("brand_id") @db.Uuid
+  locale         String  @db.VarChar(10)
+  description    String?
+  seoTitle       String? @map("seo_title") @db.VarChar(255)
+  seoDescription String? @map("seo_description") @db.VarChar(500)
+
+  brand    Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  language Locale @relation(fields: [locale], references: [code], onDelete: Restrict)
+
+  @@id([brandId, locale])
+  @@index([locale])
+  @@map("brand_translations")
+}
