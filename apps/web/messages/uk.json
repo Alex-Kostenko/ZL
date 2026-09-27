@@ -104,7 +104,20 @@
     "priceFrom": "від {price}",
     "noPrice": "Ціну уточнюйте",
     "oldPrice": "Стара ціна",
-    "noImage": "Фото незабаром"
+    "noImage": "Фото незабаром",
+    "showImage": "Показати фото {index} з {total}",
+    "discount": "Знижка {percent}%",
+    "addToCart": "Додати в кошик",
+    "cartSoon": "Оформлення замовлень запрацює найближчим часом.",
+    "sku": "Артикул",
+    "units": "{count, plural, one {# шт.} few {# шт.} many {# шт.} other {# шт.}}",
+    "description": "Опис",
+    "specs": "Характеристики",
+    "related": "Схожі товари",
+    "allInCategory": "Усі товари розділу «{name}»",
+    "metaTitle": "{title} — купити в Мисливській лавці",
+    "metaDescription": "{title}: ціна, характеристики, наявність у магазинах. Доставка по Україні.",
+    "metaDescriptionPrice": "{title} за ціною {price}: характеристики, наявність у магазинах. Доставка по Україні."
   },
   "pagination": {
     "label": "Сторінки",

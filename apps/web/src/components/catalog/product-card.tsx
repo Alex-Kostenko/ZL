@@ -3,10 +3,10 @@ import { Badge } from '@ml/ui/components/badge';
 import { cn } from '@ml/ui/lib/utils';
 import { Camera } from 'lucide-react';
 import Image from 'next/image';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { formatPrice } from '@/lib/format';
 import { brandHref, productHref } from '@/lib/routes';
+import { PriceTag } from './price-tag';
 
 // Grid: 2 columns on phones, 3 from md, 4 from xl (container 1240 px).
 const IMAGE_SIZES = '(min-width: 1280px) 280px, (min-width: 768px) 30vw, 50vw';
@@ -24,7 +24,6 @@ export function ProductCard({
 }) {
   const t = useTranslations('product');
   const tListing = useTranslations('listing');
-  const locale = useLocale();
   const { price } = product;
 
   return (
@@ -73,28 +72,7 @@ export function ProductCard({
       </h3>
 
       <div className="mt-auto">
-        {price ? (
-          <p className="flex flex-wrap items-baseline gap-x-2">
-            <span
-              className={cn(
-                'font-serif text-lg font-bold text-heading',
-                price.oldAmount && 'text-promo',
-              )}
-            >
-              {product.hasPriceRange
-                ? t('priceFrom', { price: formatPrice(price.amount, locale, price.currency) })
-                : formatPrice(price.amount, locale, price.currency)}
-            </span>
-            {price.oldAmount && (
-              <s className="text-sm text-muted-foreground">
-                <span className="sr-only">{t('oldPrice')}: </span>
-                {formatPrice(price.oldAmount, locale, price.currency)}
-              </s>
-            )}
-          </p>
-        ) : (
-          <p className="text-sm text-muted-foreground">{t('noPrice')}</p>
-        )}
+        <PriceTag price={price} from={product.hasPriceRange} />
         <p
           className={cn('mt-1 text-xs', product.inStock ? 'text-primary' : 'text-muted-foreground')}
         >

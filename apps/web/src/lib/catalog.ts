@@ -3,6 +3,9 @@ import {
   categoriesGetTree,
   type CategoryDetailDto,
   type CategoryNodeDto,
+  type ProductDetailDto,
+  type ProductListItemDto,
+  productsBySlug,
   searchFind,
   type SearchFindData,
   type SearchResultDto,
@@ -58,3 +61,34 @@ export const searchListing = (query: SearchFindData['query']) =>
 const searchListingCached = cache(async (key: string): Promise<SearchResultDto | null> =>
   orNotFound(await searchFind({ client: api, query: JSON.parse(key) as SearchFindData['query'] })),
 );
+
+/** Product page data. Shared by `generateMetadata` and the page. */
+export const getProduct = cache(
+  async (locale: Locale, slug: string): Promise<ProductDetailDto | null> =>
+    orNotFound(await productsBySlug({ client: api, path: { slug }, query: { locale } })),
+);
+
+/**
+ * "Related" block: other in-stock products from the same category. Optional content:
+ * any failure yields [] so the product page still renders.
+ */
+export async function getRelatedProducts(
+  locale: Locale,
+  product: ProductDetailDto,
+  limit = 8,
+): Promise<ProductListItemDto[]> {
+  if (!product.category) return [];
+  try {
+    const result = await searchListing({
+      locale,
+      category: product.category.path,
+      inStock: true,
+      sort: 'relevance',
+      page: 1,
+      limit: limit + 1,
+    });
+    return (result?.items ?? []).filter((item) => item.id !== product.id).slice(0, limit);
+  } catch {
+    return [];
+  }
+}

@@ -104,7 +104,20 @@
     "priceFrom": "from {price}",
     "noPrice": "Price on request",
     "oldPrice": "Old price",
-    "noImage": "Photo coming soon"
+    "noImage": "Photo coming soon",
+    "showImage": "Show photo {index} of {total}",
+    "discount": "{percent}% off",
+    "addToCart": "Add to cart",
+    "cartSoon": "Online ordering is coming soon.",
+    "sku": "SKU",
+    "units": "{count, plural, one {# pc} other {# pcs}}",
+    "description": "Description",
+    "specs": "Specifications",
+    "related": "Similar products",
+    "allInCategory": "All products in {name}",
+    "metaTitle": "{title} — buy at Myslyvska Lavka",
+    "metaDescription": "{title}: price, specifications, in-store availability. Delivery across Ukraine.",
+    "metaDescriptionPrice": "{title} for {price}: specifications, in-store availability. Delivery across Ukraine."
   },
   "pagination": {
     "label": "Pagination",
