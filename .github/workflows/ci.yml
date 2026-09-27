@@ -18,6 +18,32 @@ jobs:
     timeout-minutes: 20
     env:
       HUSKY: 0
+    # Integration tests (npm test) use ml_test and Redis db 1 from .env.example; same images as docker-compose.yml.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ml
+          POSTGRES_PASSWORD: ml
+          POSTGRES_DB: ml_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ml -d ml_test" --health-interval 5s --health-timeout 5s
+          --health-retries 12
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 5s --health-retries 12
+      meilisearch:
+        image: getmeili/meilisearch:v1.16
+        env:
+          MEILI_ENV: development
+          MEILI_MASTER_KEY: dev-master-key-change-me-0123456789
+        ports: ['7700:7700']
+        options: >-
+          --health-cmd "wget -q --spider http://127.0.0.1:7700/health" --health-interval 5s
+          --health-timeout 5s --health-retries 12
     steps:
       - uses: actions/checkout@v7
 

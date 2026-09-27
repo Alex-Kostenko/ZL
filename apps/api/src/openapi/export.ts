@@ -19,6 +19,7 @@ async function exportSpec(): Promise<void> {
 
   const target = resolve(__dirname, '../../../../packages/api-client/openapi.json');
   writeFileSync(target, `${JSON.stringify(document, null, 2)}\n`);
+  // eslint-disable-next-line no-console -- CLI script output
   console.log(`OpenAPI spec written to ${target}`);
 }
 

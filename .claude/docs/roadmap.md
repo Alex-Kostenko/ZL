@@ -54,8 +54,8 @@
 - [x] 4.5 OpenAPI/Swagger на `/api/docs` (тільки dev), версіонування `/api/v1`.
 - [x] 4.6 Redis module + BullMQ (JobsModule) з базовою чергою та `jobId` у логах; Bull Board UI (dev).
 - [x] 4.7 Генерація `packages/api-client` з OpenAPI (`npm run api:generate`).
-- [ ] 4.8 Тестова інфраструктура: Vitest/Jest unit + integration з окремою тестовою БД.
-- ✅ `/health/ready` = ok; Swagger відкривається; web отримує дані через згенерований клієнт; тести зелені.
+- [x] 4.8 Тестова інфраструктура: Vitest unit + integration з окремою тестовою БД.
+- ✅ `/health/ready` = ok; Swagger відкривається; web отримує дані через згенерований клієнт; тести зелені. **Етап виконано.**
 
 ## Етап 5. Модель даних каталогу 🤖 (M)
 - [ ] 5.1 Prisma: Locale-патерн (`*_translations`), Category (дерево), Brand.

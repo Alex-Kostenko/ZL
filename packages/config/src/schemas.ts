@@ -19,7 +19,7 @@ const redisUrl = z.url().refine((v) => v.startsWith('redis://') || v.startsWith(
 
 export const apiEnvSchema = z.object({
   NODE_ENV: nodeEnv,
-  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
+  LOG_LEVEL: z.enum(['silent', 'fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
   API_PORT: port.default(4000),
   WEB_URL: z.url(),
 
@@ -27,6 +27,7 @@ export const apiEnvSchema = z.object({
   DATABASE_URL_TEST: postgresUrl.optional(),
 
   REDIS_URL: redisUrl,
+  REDIS_URL_TEST: redisUrl.optional(),
 
   MEILI_HOST: z.url(),
   MEILI_MASTER_KEY: z.string().min(16),

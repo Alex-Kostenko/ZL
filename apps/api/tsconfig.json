@@ -1,8 +1,8 @@
 {
   "extends": "@ml/tsconfig/nestjs.json",
   "compilerOptions": {
-    "rootDir": "src",
     "outDir": "dist"
   },
-  "include": ["src"]
+  // Typecheck covers tests too; the build (tsconfig.build.json) compiles src only.
+  "include": ["src", "test", "vitest.config.mts"]
 }
