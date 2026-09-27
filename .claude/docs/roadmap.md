@@ -48,7 +48,7 @@
 
 ## Етап 4. Фундамент backend 🤖 (M)
 - [x] 4.1 Prisma підключено до NestJS (PrismaModule), перша міграція.
-- [ ] 4.2 Structured logging (pino) + `requestId` у кожному запиті та відповіді.
+- [x] 4.2 Structured logging (pino) + `requestId` у кожному запиті та відповіді.
 - [ ] 4.3 Глобальна валідація, єдиний формат помилок, exception filter.
 - [ ] 4.4 `/health`, `/health/ready` (Postgres, Redis, Meilisearch).
 - [x] 4.5 OpenAPI/Swagger на `/api/docs` (тільки dev), версіонування `/api/v1`.

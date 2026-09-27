@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { loadApiEnv } from '@ml/config';
 import { Logger, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { Logger as PinoLogger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { SWAGGER_PATH, setupSwagger } from './openapi/swagger';
 
@@ -9,7 +10,9 @@ async function bootstrap(): Promise<void> {
   // Fails fast on missing/invalid env, before any module initializes.
   const env = loadApiEnv();
 
-  const app = await NestFactory.create(AppModule);
+  // Buffer bootstrap logs until pino is ready, so every line is structured.
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  app.useLogger(app.get(PinoLogger));
   app.enableShutdownHooks();
 
   // All routes live under /api/v{N}; version 1 is the default.
