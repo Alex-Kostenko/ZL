@@ -1,0 +1,27 @@
+{
+  "name": "@ml/api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "node dist/main.js",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@ml/eslint-config": "^0.0.0",
+    "@ml/tsconfig": "^0.0.0",
+    "@nestjs/cli": "^12.0.7",
+    "@nestjs/schematics": "^12.0.5",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.19.0"
+  },
+  "dependencies": {
+    "@nestjs/common": "^12.1.0",
+    "@nestjs/core": "^12.1.0",
+    "@nestjs/platform-express": "^12.1.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  }
+}

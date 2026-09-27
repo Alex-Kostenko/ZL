@@ -1,0 +1,4 @@
+{
+  "extends": "@ml/tsconfig/library.json",
+  "include": ["src", "tsdown.config.ts"]
+}

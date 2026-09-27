@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Мисливська лавка — Brand Identity</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:opsz,wght@18..144,400;18..144,700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --steel: #3d677b;
+      --stone: #a6a7a3;
+      --sand: #d3c7b1;
+      --bronze: #c28f48;
+      --terracotta: #9a4832;
+
+      --ink: #181b1a;
+      --text: #252927;
+      --muted: #6e736f;
+      --paper: #f5f3ee;
+      --white: #ffffff;
+
+      --serif: "Merriweather", Georgia, serif;
+      --sans: "Inter", Arial, sans-serif;
+
+      --radius: 4px;
+      --container: 1240px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--paper);
+      font-family: var(--sans);
+      line-height: 1.55;
+    }
+
+    .container {
+      width: min(calc(100% - 48px), var(--container));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin-bottom: 18px;
+      color: var(--bronze);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, h4 {
+      margin-top: 0;
+      font-family: var(--serif);
+      line-height: 1.15;
+    }
+
+    h2 {
+      margin-bottom: 24px;
+      font-size: clamp(34px, 5vw, 56px);
+      color: var(--ink);
+    }
+
+    p {
+      margin-top: 0;
+    }
+
+    section {
+      padding: 110px 0;
+    }
+
+    /* HEADER */
+
+    header {
+      position: absolute;
+      z-index: 10;
+      width: 100%;
+      padding: 28px 0;
+      color: white;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.55);
+      font-family: var(--serif);
+      font-weight: 700;
+    }
+
+    .brand-name {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .nav-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      opacity: .7;
+    }
+
+    /* HERO */
+
+    .hero {
+      min-height: 92vh;
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      overflow: hidden;
+      padding: 170px 0 90px;
+      color: white;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(194,143,72,.28), transparent 28%),
+        linear-gradient(135deg, #233d49 0%, var(--steel) 48%, #18282e 100%);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -120px;
+      bottom: -220px;
+      width: 700px;
+      height: 700px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 50%;
+      box-shadow:
+        0 0 0 100px rgba(255,255,255,.025),
+        0 0 0 200px rgba(255,255,255,.018);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+    }
+
+    .hero h1 {
+      max-width: 850px;
+      margin: 0 0 32px;
+      font-size: clamp(54px, 8vw, 108px);
+      letter-spacing: -.04em;
+    }
+
+    .hero-copy {
+      max-width: 690px;
+      margin-bottom: 52px;
+      font-size: 18px;
+      color: rgba(255,255,255,.78);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 60px;
+    }
+
+    .stat strong {
+      display: block;
+      margin-bottom: 3px;
+      font-family: var(--serif);
+      font-size: 30px;
+    }
+
+    .stat span {
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      opacity: .62;
+    }
+
+    /* BRAND CORE */
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: .75fr 1.25fr;
+      gap: 100px;
+      align-items: start;
+    }
+
+    .big-copy {
+      font-family: var(--serif);
+      font-size: clamp(26px, 3vw, 40px);
+      line-height: 1.4;
+    }
+
+    .values {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 70px;
+      border-top: 1px solid #d6d3ca;
+      border-bottom: 1px solid #d6d3ca;
+    }
+
+    .value {
+      padding: 34px 30px;
+      border-right: 1px solid #d6d3ca;
+    }
+
+    .value:first-child {
+      padding-left: 0;
+    }
+
+    .value:last-child {
+      border-right: 0;
+    }
+
+    .value-number {
+      margin-bottom: 35px;
+      color: var(--bronze);
+      font-size: 12px;
+    }
+
+    .value h3 {
+      margin-bottom: 10px;
+      font-size: 23px;
+    }
+
+    .value p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* COLORS */
+
+    .colors-section {
+      color: white;
+      background: var(--ink);
+    }
+
+    .colors-section h2 {
+      color: white;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      min-height: 420px;
+      margin-top: 55px;
+    }
+
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 26px;
+    }
+
+    .swatch-name {
+      margin-bottom: 6px;
+      font-family: var(--serif);
+      font-size: 20px;
+    }
+
+    .swatch-code {
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      opacity: .7;
+    }
+
+    .steel { background: var(--steel); }
+    .stone { background: var(--stone); color: var(--ink); }
+    .sand { background: var(--sand); color: var(--ink); }
+    .bronze { background: var(--bronze); color: var(--ink); }
+    .terracotta { background: var(--terracotta); }
+
+    /* TYPOGRAPHY */
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+
+    .type-card {
+      padding-top: 28px;
+      border-top: 2px solid var(--steel);
+    }
+
+    .type-card .letter {
+      margin: 25px 0;
+      font-size: 120px;
+      line-height: 1;
+    }
+
+    .serif {
+      font-family: var(--serif);
+    }
+
+    .sans {
+      font-family: var(--sans);
+    }
+
+    .type-card h3 {
+      margin-bottom: 8px;
+      font-size: 30px;
+    }
+
+    .type-meta {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .type-demo {
+      margin-top: 60px;
+      padding: 50px 0;
+      border-top: 1px solid #d6d3ca;
+      border-bottom: 1px solid #d6d3ca;
+    }
+
+    .display-demo {
+      max-width: 900px;
+      margin-bottom: 25px;
+      font-family: var(--serif);
+      font-size: clamp(42px, 6vw, 76px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -.035em;
+    }
+
+    .body-demo {
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    /* TONE */
+
+    .tone {
+      color: white;
+      background: var(--steel);
+    }
+
+    .tone h2 {
+      color: white;
+    }
+
+    .tone-grid {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 100px;
+    }
+
+    .tone-rule {
+      padding: 26px 0;
+      border-top: 1px solid rgba(255,255,255,.25);
+    }
+
+    .tone-rule strong {
+      display: block;
+      margin-bottom: 8px;
+      font-family: var(--serif);
+      font-size: 24px;
+    }
+
+    .tone-rule span {
+      color: rgba(255,255,255,.7);
+      font-size: 14px;
+    }
+
+    .quote {
+      align-self: center;
+      font-family: var(--serif);
+      font-size: clamp(32px, 4vw, 56px);
+      line-height: 1.3;
+    }
+
+    .quote em {
+      color: var(--sand);
+      font-weight: 400;
+    }
+
+    /* UI */
+
+    .ui-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 35px;
+      margin-top: 50px;
+    }
+
+    .product-card {
+      overflow: hidden;
+      background: white;
+      border: 1px solid #dfddd6;
+    }
+
+    .product-image {
+      height: 330px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: #ece9e2;
+    }
+
+    .product-placeholder {
+      width: 62%;
+      height: 50px;
+      border-radius: 30px 6px 6px 30px;
+      transform: rotate(-5deg);
+      background: #303634;
+      box-shadow: 100px 0 0 -17px #303634;
+    }
+
+    .badge {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      padding: 8px 11px;
+      color: white;
+      background: var(--terracotta);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .product-content {
+      padding: 28px;
+    }
+
+    .product-brand {
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .product-title {
+      margin-bottom: 28px;
+      font-size: 22px;
+    }
+
+    .price {
+      margin-bottom: 22px;
+      font-size: 25px;
+      font-weight: 700;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 14px 24px;
+      border: 0;
+      color: white;
+      background: var(--steel);
+      font: 600 13px var(--sans);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .banner {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 50px;
+      color: white;
+      background:
+        linear-gradient(145deg, rgba(24,27,26,.2), rgba(24,27,26,.75)),
+        var(--terracotta);
+    }
+
+    .banner-small {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .banner h3 {
+      max-width: 480px;
+      margin: 60px 0 20px;
+      font-size: clamp(38px, 5vw, 68px);
+    }
+
+    .banner p {
+      max-width: 400px;
+      color: rgba(255,255,255,.75);
+    }
+
+    /* BRAND MATERIALS */
+
+    .materials {
+      background: #e8e3d8;
+    }
+
+    .mockups {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 30px;
+      margin-top: 55px;
+    }
+
+    .business-card {
+      min-height: 350px;
+      padding: 45px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: white;
+      background: var(--steel);
+      box-shadow: 0 20px 50px rgba(0,0,0,.08);
+    }
+
+    .business-card .logo {
+      font: 700 28px var(--serif);
+    }
+
+    .business-card .details {
+      font-size: 13px;
+      line-height: 1.9;
+      opacity: .8;
+    }
+
+    .price-tag {
+      min-height: 350px;
+      padding: 38px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: white;
+      box-shadow: 0 20px 50px rgba(0,0,0,.08);
+    }
+
+    .price-tag h4 {
+      font-size: 25px;
+    }
+
+    .tag-price {
+      font-size: 38px;
+      font-weight: 700;
+    }
+
+    .tag-accent {
+      width: 55px;
+      height: 6px;
+      background: var(--bronze);
+    }
+
+    /* FOOTER */
+
+    footer {
+      padding: 70px 0;
+      color: white;
+      background: var(--ink);
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    footer .logo {
+      font: 700 30px var(--serif);
+    }
+
+    footer p {
+      margin: 8px 0 0;
+      color: rgba(255,255,255,.5);
+      font-size: 13px;
+    }
+
+    @media (max-width: 800px) {
+      section {
+        padding: 75px 0;
+      }
+
+      .intro-grid,
+      .type-grid,
+      .tone-grid,
+      .ui-grid,
+      .mockups {
+        grid-template-columns: 1fr;
+        gap: 50px;
+      }
+
+      .color-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .swatch {
+        min-height: 180px;
+      }
+
+      .values {
+        grid-template-columns: 1fr;
+      }
+
+      .value {
+        padding-left: 0;
+        border-right: 0;
+        border-bottom: 1px solid #d6d3ca;
+      }
+
+      .hero-stats {
+        gap: 25px;
+        flex-wrap: wrap;
+      }
+
+      .nav-label {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="brand">
+      <div class="brand-mark">МЛ</div>
+      <div class="brand-name">Мисливська лавка</div>
+    </div>
+    <div class="nav-label">Brand Identity / 2026</div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="eyebrow">Brand Identity System</div>
+
+      <h1>Мисливська<br>лавка</h1>
+
+      <p class="hero-copy">
+        Спеціалізований магазин товарів для полювання, риболовлі
+        та активного відпочинку.
+      </p>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <strong>50 000+</strong>
+          <span>товарів</span>
+        </div>
+
+        <div class="stat">
+          <strong>500+</strong>
+          <span>світових брендів</span>
+        </div>
+
+        <div class="stat">
+          <strong>01</strong>
+          <span>професійний підхід</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section>
+    <div class="container">
+
+      <div class="intro-grid">
+        <div>
+          <div class="eyebrow">01 / Основа бренду</div>
+          <h2>Знання.<br>Досвід.<br>Практика.</h2>
+        </div>
+
+        <div>
+          <p class="big-copy">
+            «Мисливська лавка» — спеціалізований магазин товарів
+            для полювання, риболовлі та активного відпочинку.
+            Понад 50 000 найменувань від 500 світових брендів.
+          </p>
+        </div>
+      </div>
+
+      <div class="values">
+
+        <div class="value">
+          <div class="value-number">01</div>
+          <h3>Професійний</h3>
+          <p>
+            Говоримо мовою людей, які розуміються на спорядженні
+            та знають, для чого воно потрібне.
+          </p>
+        </div>
+
+        <div class="value">
+          <div class="value-number">02</div>
+          <h3>Практичний</h3>
+          <p>
+            Фокусуємося на реальних характеристиках,
+            застосуванні та користі товару.
+          </p>
+        </div>
+
+        <div class="value">
+          <div class="value-number">03</div>
+          <h3>Компетентний</h3>
+          <p>
+            Консультація базується на знанні продукту,
+            а не на маркетингових формулюваннях.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <section class="colors-section">
+    <div class="container">
+
+      <div class="eyebrow">02 / Color System</div>
+      <h2>Кольори бренду</h2>
+
+      <div class="color-grid">
+
+        <div class="swatch steel">
+          <div class="swatch-name">Steel Blue</div>
+          <div class="swatch-code">#3D677B</div>
+        </div>
+
+        <div class="swatch stone">
+          <div class="swatch-name">Stone Gray</div>
+          <div class="swatch-code">#A6A7A3</div>
+        </div>
+
+        <div class="swatch sand">
+          <div class="swatch-name">Sand Beige</div>
+          <div class="swatch-code">#D3C7B1</div>
+        </div>
+
+        <div class="swatch bronze">
+          <div class="swatch-name">Bronze</div>
+          <div class="swatch-code">#C28F48</div>
+        </div>
+
+        <div class="swatch terracotta">
+          <div class="swatch-name">Terracotta</div>
+          <div class="swatch-code">#9A4832</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <section>
+    <div class="container">
+
+      <div class="eyebrow">03 / Typography</div>
+      <h2>Типографіка</h2>
+
+      <div class="type-grid">
+
+        <div class="type-card">
+          <div class="type-meta">PRIMARY / BRAND TYPEFACE</div>
+          <div class="letter serif">Aa</div>
+          <h3>Merriweather</h3>
+          <div class="type-meta">
+            Regular 400 · Bold 700<br>
+            Заголовки · бренд · реклама · поліграфія
+          </div>
+        </div>
+
+        <div class="type-card">
+          <div class="type-meta">SECONDARY / UI TYPEFACE</div>
+          <div class="letter sans">Aa</div>
+          <h3 class="sans">Inter</h3>
+          <div class="type-meta">
+            Regular 400 · Medium 500 · SemiBold 600 · Bold 700<br>
+            UI · ціни · характеристики · кнопки · навігація
+          </div>
+        </div>
+
+      </div>
+
+      <div class="type-demo">
+        <div class="display-demo">
+          Спорядження, якому довіряють.
+        </div>
+
+        <p class="body-demo">
+          Професійне спорядження для полювання, риболовлі та
+          активного відпочинку. Консультація спеціалістів,
+          перевірені бренди та практичний підхід до вибору.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <section class="tone">
+    <div class="container">
+
+      <div class="tone-grid">
+
+        <div>
+          <div class="eyebrow">04 / Tone of Voice</div>
+          <h2>Професійно.<br>Коротко.<br>По суті.</h2>
+
+          <div class="tone-rule">
+            <strong>Без зайвих слів</strong>
+            <span>
+              Не перевантажуємо комунікацію рекламними формулюваннями.
+            </span>
+          </div>
+
+          <div class="tone-rule">
+            <strong>Знання товару</strong>
+            <span>
+              Характеристики, сумісність, сценарії використання.
+            </span>
+          </div>
+
+          <div class="tone-rule">
+            <strong>Жива консультація</strong>
+            <span>
+              Спілкування в магазині та через соціальні мережі.
+            </span>
+          </div>
+        </div>
+
+        <div class="quote">
+          Менше маркетингових фраз.<br>
+          <em>Більше корисної інформації.</em>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <section>
+    <div class="container">
+
+      <div class="eyebrow">05 / Digital Identity</div>
+      <h2>Айдентика в інтерфейсі</h2>
+
+      <div class="ui-grid">
+
+        <article class="product-card">
+
+          <div class="product-image">
+            <div class="badge">Новинка</div>
+            <div class="product-placeholder"></div>
+          </div>
+
+          <div class="product-content">
+            <div class="product-brand">Swarovski Optik</div>
+
+            <h3 class="product-title">
+              Оптичний приціл Z8i 2–16×50 P
+            </h3>
+
+            <div class="price">126 900 ₴</div>
+
+            <button class="button">
+              Купити
+            </button>
+          </div>
+
+        </article>
+
+
+        <div class="banner">
+          <div class="banner-small">Мисливська лавка / Сезон 2026</div>
+
+          <div>
+            <h3>Готові до нового сезону.</h3>
+
+            <p>
+              Оптика, спорядження, одяг та аксесуари
+              від провідних світових виробників.
+            </p>
+          </div>
+
+          <div class="banner-small">
+            50 000+ товарів · 500+ брендів
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <section class="materials">
+    <div class="container">
+
+      <div class="eyebrow">06 / Brand Applications</div>
+      <h2>Фірмові носії</h2>
+
+      <div class="mockups">
+
+        <div class="business-card">
+          <div class="logo">
+            Мисливська<br>лавка
+          </div>
+
+          <div class="details">
+            Олександр Іваненко<br>
+            Менеджер-консультант<br><br>
+            +380 XX XXX XX XX<br>
+            info@myslyvska-lavka.ua
+          </div>
+        </div>
+
+
+        <div class="price-tag">
+
+          <div>
+            <div class="tag-accent"></div>
+
+            <p class="product-brand" style="margin-top:25px;">
+              Swarovski Optik
+            </p>
+
+            <h4>
+              Z8i 2–16×50 P
+            </h4>
+          </div>
+
+          <div>
+            <div class="tag-price">126 900 ₴</div>
+
+            <div class="type-meta" style="margin-top:10px;">
+              В наявності
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+
+<footer>
+  <div class="container footer-grid">
+
+    <div>
+      <div class="logo">Мисливська лавка</div>
+      <p>Brand Identity System · 2026</p>
+    </div>
+
+    <div class="nav-label">
+      Професійно · Практично · Компетентно
+    </div>
+
+  </div>
+</footer>
+
+</body>
+</html>

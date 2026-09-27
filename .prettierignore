@@ -1,0 +1,9 @@
+node_modules
+dist
+.next
+.turbo
+coverage
+package-lock.json
+.claude/docs/source
+.claude
+.husky

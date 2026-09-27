@@ -1,0 +1,19 @@
+{
+  "name": "@ml/ui",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Presentational UI kit (shadcn/ui + Radix), no domain logic",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@ml/eslint-config": "^0.0.0",
+    "@ml/tsconfig": "^0.0.0",
+    "@types/react": "^19.3.0"
+  }
+}
