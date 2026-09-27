@@ -62,7 +62,7 @@
 - [x] 5.2 Product, ProductVariant, product_categories (+ основна категорія), прапорці `isSale`/`isAntidron`.
 - [x] 5.3 Attribute, AttributeValue, ProductAttributeValue, category ↔ attributes, provenance-поля (§67.10).
 - [x] 5.4 Warehouse, Inventory, Price (типи цін, validFrom/To), Media, ProductMedia.
-- [ ] 5.5 integration_mappings, sync_logs, redirects, seo_metadata.
+- [x] 5.5 integration_mappings, sync_logs, redirects, seo_metadata.
 - [ ] 5.6 Seed: дерево категорій з `categories.md`, склади, атрибути.
 - [ ] 5.7 **Генератор фейкових даних: 50 000 товарів**, 500 брендів, ціни, залишки — щоб одразу тестувати продуктивність.
 - ✅ `npm run db:reset` створює БД з категоріями й 50k товарів < 3 хв; ERD-діаграма згенерована в docs.

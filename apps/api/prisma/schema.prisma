@@ -40,6 +40,7 @@ model Locale {
   attributeTranslations      AttributeTranslation[]
   attributeValueTranslations AttributeValueTranslation[]
   mediaTranslations          MediaTranslation[]
+  seoMetadata                SeoMetadata[]
 
   @@map("locales")
 }
@@ -61,7 +62,6 @@ model Category {
   imageId    String?  @map("image_id") @db.Uuid
   position   Int      @default(0)
   isActive   Boolean  @default(true) @map("is_active")
-  canonical  String?  @db.VarChar(1000)
   /// Tria id, when the category comes from the ERP.
   externalId String?  @unique @map("external_id") @db.VarChar(100)
   createdAt  DateTime @default(now()) @map("created_at")
@@ -80,12 +80,10 @@ model Category {
 }
 
 model CategoryTranslation {
-  categoryId     String  @map("category_id") @db.Uuid
-  locale         String  @db.VarChar(10)
-  name           String  @db.VarChar(255)
-  description    String?
-  seoTitle       String? @map("seo_title") @db.VarChar(255)
-  seoDescription String? @map("seo_description") @db.VarChar(500)
+  categoryId  String  @map("category_id") @db.Uuid
+  locale      String  @db.VarChar(10)
+  name        String  @db.VarChar(255)
+  description String?
 
   category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   language Locale   @relation(fields: [locale], references: [code], onDelete: Restrict)
@@ -120,11 +118,9 @@ model Brand {
 }
 
 model BrandTranslation {
-  brandId        String  @map("brand_id") @db.Uuid
-  locale         String  @db.VarChar(10)
-  description    String?
-  seoTitle       String? @map("seo_title") @db.VarChar(255)
-  seoDescription String? @map("seo_description") @db.VarChar(500)
+  brandId     String  @map("brand_id") @db.Uuid
+  locale      String  @db.VarChar(10)
+  description String?
 
   brand    Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
   language Locale @relation(fields: [locale], references: [code], onDelete: Restrict)
@@ -493,6 +489,7 @@ model Media {
 
   translations MediaTranslation[]
   products     ProductMedia[]
+  seoOgImages  SeoMetadata[]
   categories   Category[]         @relation("CategoryImage")
   brands       Brand[]            @relation("BrandLogo")
 
@@ -529,4 +526,154 @@ model ProductMedia {
   @@index([productId, position])
   @@index([mediaId])
   @@map("product_media")
+}
+
+// ─── SEO (§41, §43, §59) ─────────────────────────────────────────────────────
+
+/// What a SEO record or redirect belongs to. ROUTE = a static storefront path (`/sale`, `/brands`).
+enum SeoEntityType {
+  PRODUCT
+  CATEGORY
+  BRAND
+  PAGE
+  ARTICLE
+  ROUTE
+
+  @@map("seo_entity_type")
+}
+
+/// The single source of SEO texts per entity and locale (no seo_* columns on entities).
+/// Polymorphic: `entityId` is the entity UUID, or the path for ROUTE; the owning service deletes
+/// these rows together with the entity. Missing fields fall back to generated templates.
+model SeoMetadata {
+  id            String        @id @default(uuid(7)) @db.Uuid
+  entityType    SeoEntityType @map("entity_type")
+  entityId      String        @map("entity_id") @db.VarChar(255)
+  locale        String        @db.VarChar(10)
+  title         String?       @db.VarChar(255)
+  description   String?       @db.VarChar(500)
+  /// Absolute or site-relative canonical override; default is the entity URL.
+  canonical     String?       @db.VarChar(1000)
+  noindex       Boolean       @default(false)
+  nofollow      Boolean       @default(false)
+  ogTitle       String?       @map("og_title") @db.VarChar(255)
+  ogDescription String?       @map("og_description") @db.VarChar(500)
+  ogImageId     String?       @map("og_image_id") @db.Uuid
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  language Locale @relation(fields: [locale], references: [code], onDelete: Restrict)
+  ogImage  Media? @relation(fields: [ogImageId], references: [id], onDelete: SetNull)
+
+  @@unique([entityType, entityId, locale])
+  @@map("seo_metadata")
+}
+
+enum RedirectSource {
+  MANUAL
+  /// Proposed automatically when a slug changes (§43).
+  SLUG_CHANGE
+  IMPORT
+
+  @@map("redirect_source")
+}
+
+/// 301/302 redirects and 410 Gone for removed pages (§43, §14.2). Paths are site-relative,
+/// normalized (leading `/`, no trailing `/`, no query). `toPath` is null only for 410.
+/// The service rejects chains and loops when saving.
+model Redirect {
+  id         String         @id @default(uuid(7)) @db.Uuid
+  fromPath   String         @unique @map("from_path") @db.VarChar(1000)
+  toPath     String?        @map("to_path") @db.VarChar(1000)
+  statusCode Int            @default(301) @map("status_code")
+  source     RedirectSource @default(MANUAL)
+  isActive   Boolean        @default(true) @map("is_active")
+  hits       Int            @default(0)
+  lastHitAt  DateTime?      @map("last_hit_at")
+  createdAt  DateTime       @default(now()) @map("created_at")
+  updatedAt  DateTime       @updatedAt @map("updated_at")
+
+  @@index([toPath])
+  @@map("redirects")
+}
+
+// ─── Integrations (§26–§30) ──────────────────────────────────────────────────
+
+enum IntegrationEntityType {
+  PRODUCT
+  VARIANT
+  CATEGORY
+  BRAND
+  WAREHOUSE
+  PRICE_TYPE
+  PRICE
+  ATTRIBUTE
+  ATTRIBUTE_VALUE
+  ORDER
+  CUSTOMER
+
+  @@map("integration_entity_type")
+}
+
+/// External id ↔ internal id per integration (`tria`, supplier feeds). `payloadHash` of the last
+/// applied payload lets a sync skip unchanged items and makes re-runs idempotent (§30).
+model IntegrationMapping {
+  id           String                @id @default(uuid(7)) @db.Uuid
+  integration  String                @db.VarChar(50)
+  entityType   IntegrationEntityType @map("entity_type")
+  externalId   String                @map("external_id") @db.VarChar(255)
+  internalId   String                @map("internal_id") @db.Uuid
+  payloadHash  String?               @map("payload_hash") @db.VarChar(64)
+  lastSyncedAt DateTime?             @map("last_synced_at")
+  createdAt    DateTime              @default(now()) @map("created_at")
+  updatedAt    DateTime              @updatedAt @map("updated_at")
+
+  @@unique([integration, entityType, externalId])
+  @@index([entityType, internalId])
+  @@map("integration_mappings")
+}
+
+enum SyncTrigger {
+  SCHEDULED
+  MANUAL
+  RETRY
+
+  @@map("sync_trigger")
+}
+
+enum SyncStatus {
+  RUNNING
+  SUCCESS
+  /// Finished, but some items failed validation or mapping.
+  PARTIAL
+  FAILED
+
+  @@map("sync_status")
+}
+
+/// One sync run (history for /admin/integrations, step 11.3). Item-level errors are a bounded
+/// sample in `errors`; full details are in logs by `jobId`.
+model SyncLog {
+  id           String      @id @default(uuid(7)) @db.Uuid
+  integration  String      @db.VarChar(50)
+  /// What was synced: `products`, `prices`, `inventory`, `orders`.
+  scope        String      @db.VarChar(50)
+  trigger      SyncTrigger
+  status       SyncStatus  @default(RUNNING)
+  /// BullMQ job id, to correlate with logs.
+  jobId        String?     @map("job_id") @db.VarChar(255)
+  startedAt    DateTime    @default(now()) @map("started_at")
+  finishedAt   DateTime?   @map("finished_at")
+  itemsTotal   Int         @default(0) @map("items_total")
+  itemsCreated Int         @default(0) @map("items_created")
+  itemsUpdated Int         @default(0) @map("items_updated")
+  itemsSkipped Int         @default(0) @map("items_skipped")
+  itemsFailed  Int         @default(0) @map("items_failed")
+  errorMessage String?     @map("error_message")
+  /// Sample of item errors: [{ externalId, message }], capped by the sync service.
+  errors       Json?
+
+  @@index([integration, scope, startedAt(sort: Desc)])
+  @@index([status])
+  @@map("sync_logs")
 }
