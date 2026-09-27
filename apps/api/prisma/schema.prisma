@@ -34,9 +34,11 @@ model Locale {
   isActive  Boolean @default(true) @map("is_active")
   position  Int     @default(0)
 
-  categoryTranslations CategoryTranslation[]
-  brandTranslations    BrandTranslation[]
-  productTranslations  ProductTranslation[]
+  categoryTranslations       CategoryTranslation[]
+  brandTranslations          BrandTranslation[]
+  productTranslations        ProductTranslation[]
+  attributeTranslations      AttributeTranslation[]
+  attributeValueTranslations AttributeValueTranslation[]
 
   @@map("locales")
 }
@@ -68,6 +70,7 @@ model Category {
   translations CategoryTranslation[]
   products     ProductCategory[]
   primaryFor   Product[]             @relation("ProductPrimaryCategory")
+  attributes   CategoryAttribute[]
 
   @@index([parentId, position])
   @@map("categories")
@@ -163,11 +166,12 @@ model Product {
   createdAt         DateTime      @default(now()) @map("created_at")
   updatedAt         DateTime      @updatedAt @map("updated_at")
 
-  brand           Brand?               @relation(fields: [brandId], references: [id], onDelete: Restrict)
-  primaryCategory Category?            @relation("ProductPrimaryCategory", fields: [primaryCategoryId], references: [id], onDelete: Restrict)
+  brand           Brand?                  @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  primaryCategory Category?               @relation("ProductPrimaryCategory", fields: [primaryCategoryId], references: [id], onDelete: Restrict)
   categories      ProductCategory[]
   variants        ProductVariant[]
   translations    ProductTranslation[]
+  attributeValues ProductAttributeValue[]
 
   @@index([brandId])
   @@index([primaryCategoryId])
@@ -222,9 +226,161 @@ model ProductVariant {
   createdAt  DateTime      @default(now()) @map("created_at")
   updatedAt  DateTime      @updatedAt @map("updated_at")
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product         Product                 @relation(fields: [productId], references: [id], onDelete: Cascade)
+  attributeValues ProductAttributeValue[]
 
   @@index([productId, position])
   @@index([barcode])
   @@map("product_variants")
+}
+
+// ─── Catalog: attributes (§8, provenance §67.10) ─────────────────────────────
+// Normalized characteristics, never a JSON column on Product. Human-language values are
+// SELECT/MULTI_SELECT options with translated labels; STRING is for language-neutral text
+// (model numbers, standards). One source of truth per fact, so every page shows the same value.
+
+enum AttributeType {
+  STRING
+  NUMBER
+  BOOLEAN
+  SELECT
+  MULTI_SELECT
+  /// Numeric interval, e.g. magnification 3–9×: `value_number`..`value_number_to`.
+  RANGE
+
+  @@map("attribute_type")
+}
+
+/// Where a characteristic value came from (§67.10).
+enum AttributeSource {
+  MANUAL
+  TRIA
+  SUPPLIER_FEED
+  IMPORT
+
+  @@map("attribute_source")
+}
+
+model Attribute {
+  id              String        @id @default(uuid(7)) @db.Uuid
+  /// Stable machine key used in filters and imports, e.g. `caliber`, `blade_length`.
+  code            String        @unique @db.VarChar(100)
+  type            AttributeType
+  isFilterable    Boolean       @default(false) @map("is_filterable")
+  isSearchable    Boolean       @default(false) @map("is_searchable")
+  /// Distinguishes variants of one product (calibre, size, colour).
+  isVariantOption Boolean       @default(false) @map("is_variant_option")
+  position        Int           @default(0)
+  externalId      String?       @unique @map("external_id") @db.VarChar(100)
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  translations  AttributeTranslation[]
+  values        AttributeValue[]
+  categories    CategoryAttribute[]
+  productValues ProductAttributeValue[]
+
+  @@map("attributes")
+}
+
+model AttributeTranslation {
+  attributeId String  @map("attribute_id") @db.Uuid
+  locale      String  @db.VarChar(10)
+  name        String  @db.VarChar(255)
+  /// Localized unit, e.g. `мм` / `mm`.
+  unit        String? @db.VarChar(50)
+
+  attribute Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  language  Locale    @relation(fields: [locale], references: [code], onDelete: Restrict)
+
+  @@id([attributeId, locale])
+  @@map("attribute_translations")
+}
+
+/// Predefined option of a SELECT / MULTI_SELECT attribute.
+model AttributeValue {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  attributeId String   @map("attribute_id") @db.Uuid
+  /// URL-safe key used in filter URLs, e.g. `12-kalibr`; unique within the attribute.
+  code        String   @db.VarChar(150)
+  position    Int      @default(0)
+  externalId  String?  @unique @map("external_id") @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  attribute     Attribute                   @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  translations  AttributeValueTranslation[]
+  productValues ProductAttributeValue[]
+
+  @@unique([attributeId, code])
+  @@index([attributeId, position])
+  @@map("attribute_values")
+}
+
+model AttributeValueTranslation {
+  attributeValueId String @map("attribute_value_id") @db.Uuid
+  locale           String @db.VarChar(10)
+  label            String @db.VarChar(255)
+
+  attributeValue AttributeValue @relation(fields: [attributeValueId], references: [id], onDelete: Cascade)
+  language       Locale         @relation(fields: [locale], references: [code], onDelete: Restrict)
+
+  @@id([attributeValueId, locale])
+  @@map("attribute_value_translations")
+}
+
+/// Attributes available in a category (§8). Subcategories inherit their ancestors' attributes
+/// (resolved by the catalog service along `categories.path`).
+model CategoryAttribute {
+  categoryId   String  @map("category_id") @db.Uuid
+  attributeId  String  @map("attribute_id") @db.Uuid
+  position     Int     @default(0)
+  isRequired   Boolean @default(false) @map("is_required")
+  /// Show as a facet on this category page.
+  isFilterable Boolean @default(true) @map("is_filterable")
+
+  category  Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  attribute Attribute @relation(fields: [attributeId], references: [id], onDelete: Restrict)
+
+  @@id([categoryId, attributeId])
+  @@index([attributeId])
+  @@map("category_attributes")
+}
+
+/// One characteristic value of a product (variantId = null) or of a single variant.
+/// Exactly one value column is used, matching `attributes.type`; MULTI_SELECT = one row per option.
+/// The catalog service validates type consistency and uniqueness per (product, variant, attribute).
+model ProductAttributeValue {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  productId     String   @map("product_id") @db.Uuid
+  variantId     String?  @map("variant_id") @db.Uuid
+  attributeId   String   @map("attribute_id") @db.Uuid
+  /// SELECT / MULTI_SELECT.
+  valueId       String?  @map("value_id") @db.Uuid
+  /// NUMBER, and the lower bound of RANGE.
+  valueNumber   Decimal? @map("value_number") @db.Decimal(14, 4)
+  /// Upper bound of RANGE.
+  valueNumberTo Decimal? @map("value_number_to") @db.Decimal(14, 4)
+  valueBoolean  Boolean? @map("value_boolean")
+  /// STRING (language-neutral).
+  valueText     String?  @map("value_text") @db.VarChar(1000)
+
+  // Provenance (§67.10).
+  source           AttributeSource @default(MANUAL)
+  sourceExternalId String?         @map("source_external_id") @db.VarChar(100)
+  sourceUpdatedAt  DateTime?       @map("source_updated_at")
+  verifiedAt       DateTime?       @map("verified_at")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+
+  product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  attribute Attribute       @relation(fields: [attributeId], references: [id], onDelete: Restrict)
+  value     AttributeValue? @relation(fields: [valueId], references: [id], onDelete: Restrict)
+
+  @@index([productId, attributeId])
+  @@index([variantId])
+  @@index([attributeId, valueId])
+  @@index([attributeId, valueNumber])
+  @@map("product_attribute_values")
 }
