@@ -1,9 +1,10 @@
 import 'reflect-metadata';
 import { loadApiEnv } from '@ml/config';
-import { Logger, VersioningType } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Logger as PinoLogger } from 'nestjs-pino';
 import { AppModule } from './app.module';
+import { configureApp } from './app.setup';
 import { SWAGGER_PATH, setupSwagger } from './openapi/swagger';
 
 async function bootstrap(): Promise<void> {
@@ -15,9 +16,7 @@ async function bootstrap(): Promise<void> {
   app.useLogger(app.get(PinoLogger));
   app.enableShutdownHooks();
 
-  // All routes live under /api/v{N}; version 1 is the default.
-  app.setGlobalPrefix('api');
-  app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
+  configureApp(app);
 
   const swaggerEnabled = env.NODE_ENV !== 'production';
   if (swaggerEnabled) setupSwagger(app);

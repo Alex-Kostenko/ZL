@@ -48,7 +48,10 @@ const REDACT_PATHS = [
           },
           customLogLevel: (_req, res, err) =>
             err || res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info',
-          autoLogging: { ignore: (req) => req.url?.startsWith('/api/docs') ?? false },
+          // Swagger assets and frequent health probes are noise; failed checks log their own warning.
+          autoLogging: {
+            ignore: (req) => /^\/(api\/docs|health)(\/|-|\?|$)/.test(req.url ?? ''),
+          },
         },
       }),
     }),
