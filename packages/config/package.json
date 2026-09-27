@@ -30,6 +30,10 @@
   },
   "devDependencies": {
     "@ml/eslint-config": "^0.0.0",
-    "@ml/tsconfig": "^0.0.0"
+    "@ml/tsconfig": "^0.0.0",
+    "@types/node": "^24.19.0"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
   }
 }

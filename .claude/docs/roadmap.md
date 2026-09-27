@@ -40,10 +40,10 @@
 - ✅ `npm run dev` запускає web (:3000) і api (:4000); `npm run lint && npm run typecheck` зелені; CI зелений.
 
 ## Етап 3. Локальна інфраструктура 🤖 (S)
-- [ ] 3.1 `docker-compose.yml`: PostgreSQL 16, Redis 7, Meilisearch, **MinIO** (локальний S3), **Mailpit** (перехоплення email).
-- [ ] 3.2 Volumes для даних, healthchecks, `.env.example` для всіх сервісів.
-- [ ] 3.3 `packages/config`: типізоване читання env з валідацією (падати при старті, якщо змінної немає).
-- [ ] 3.4 Скрипти: `npm run infra:up`, `infra:down`, `infra:reset`.
+- [x] 3.1 `docker-compose.yml`: PostgreSQL 16, Redis 7, Meilisearch, **MinIO** (локальний S3, `pgsty/minio`), **Mailpit** (перехоплення email).
+- [x] 3.2 Volumes для даних, healthchecks, `.env.example` для всіх сервісів.
+- [x] 3.3 `packages/config`: типізоване читання env з валідацією (падати при старті, якщо змінної немає).
+- [x] 3.4 Скрипти: `npm run infra:up`, `infra:down`, `infra:reset`.
 - ✅ `npm run infra:up` → усі контейнери healthy; Meilisearch UI :7700, MinIO :9001, Mailpit :8025 відкриваються.
 
 ## Етап 4. Фундамент backend 🤖 (M)

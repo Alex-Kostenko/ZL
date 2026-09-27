@@ -1,4 +1,7 @@
 {
   "extends": "@ml/tsconfig/library.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
   "include": ["src", "tsdown.config.ts"]
 }
