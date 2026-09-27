@@ -15,6 +15,9 @@ export const QueueName = {
   DEAD_LETTER: 'dead-letter',
 } as const;
 
+/** Redis key prefix of every queue (`ml:<queue>:...`). */
+export const QUEUE_PREFIX = 'ml';
+
 export type QueueName = (typeof QueueName)[keyof typeof QueueName];
 
 export const ALL_QUEUES: readonly QueueName[] = Object.values(QueueName);

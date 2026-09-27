@@ -1,6 +1,11 @@
 import type { ApiEnv } from '@ml/config';
 import { Inject, Injectable } from '@nestjs/common';
-import type { EnqueuedTaskPromise, Meilisearch, Task } from 'meilisearch';
+import {
+  type EnqueuedTaskPromise,
+  type Meilisearch,
+  MeilisearchApiError,
+  type Task,
+} from 'meilisearch';
 import { API_ENV } from '../config/config.module';
 import { LocaleService } from '../i18n/locale.service';
 import { productIndexSettings, productIndexUid } from './product-index';
@@ -45,12 +50,32 @@ export class ProductIndexService {
    * temporary index of a full reindex, swapped in afterwards).
    */
   async prepare(locale: string, uid = this.uid(locale)): Promise<void> {
+    await this.create(uid);
+    await wait(this.meili.index(uid).updateSettings(productIndexSettings(locale)));
+  }
+
+  /** Creates an empty index unless it exists (settings untouched). */
+  async create(uid: string): Promise<void> {
     try {
       await wait(this.meili.createIndex(uid, { primaryKey: 'id' }));
     } catch (err) {
       if (!(err instanceof TaskFailedError && err.code === 'index_already_exists')) throw err;
     }
-    await wait(this.meili.index(uid).updateSettings(productIndexSettings(locale)));
+  }
+
+  /** Deletes an index and waits for it; a missing index is fine. */
+  async drop(uid: string): Promise<void> {
+    if (await this.exists(uid)) await wait(this.meili.deleteIndex(uid));
+  }
+
+  async exists(uid: string): Promise<boolean> {
+    try {
+      await this.meili.index(uid).getRawInfo();
+      return true;
+    } catch (err) {
+      if (err instanceof MeilisearchApiError && err.cause?.code === 'index_not_found') return false;
+      throw err;
+    }
   }
 }
 

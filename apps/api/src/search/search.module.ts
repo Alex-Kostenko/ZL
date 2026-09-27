@@ -7,6 +7,8 @@ import { PricingModule } from '../catalog/pricing/pricing.module';
 import { API_ENV } from '../config/config.module';
 import { ProductDocumentsService } from './product-documents.service';
 import { MEILI, ProductIndexService } from './product-index.service';
+import { SearchIndexProcessor } from './search-index.processor';
+import { SearchIndexer } from './search-indexer.service';
 
 /**
  * Search (§12): Meilisearch product indexes and the documents they hold.
@@ -24,7 +26,9 @@ import { MEILI, ProductIndexService } from './product-index.service';
     },
     ProductIndexService,
     ProductDocumentsService,
+    SearchIndexer,
+    SearchIndexProcessor,
   ],
-  exports: [MEILI, ProductIndexService, ProductDocumentsService],
+  exports: [MEILI, ProductIndexService, ProductDocumentsService, SearchIndexer],
 })
 export class SearchModule {}

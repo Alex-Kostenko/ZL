@@ -36,7 +36,7 @@ jobs:
         options: >-
           --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 5s --health-retries 12
       meilisearch:
-        image: getmeili/meilisearch:v1.16
+        image: getmeili/meilisearch:v1.54.0
         env:
           MEILI_ENV: development
           MEILI_MASTER_KEY: dev-master-key-change-me-0123456789

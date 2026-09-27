@@ -36,7 +36,7 @@ services:
       retries: 10
 
   meilisearch:
-    image: getmeili/meilisearch:v1.16
+    image: getmeili/meilisearch:v1.54.0
     restart: unless-stopped
     environment:
       MEILI_ENV: development

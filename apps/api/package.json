@@ -15,12 +15,13 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:reset": "prisma migrate reset --force && prisma db seed && tsx prisma/seed/fake.ts",
+    "db:reset": "prisma migrate reset --force && prisma db seed && tsx prisma/seed/fake.ts && tsx src/search/reindex.cli.ts",
     "db:studio": "prisma studio",
     "openapi:export": "nest build -p tsconfig.openapi.json && node dist-openapi/openapi/export.js",
     "db:seed": "prisma db seed",
     "db:seed:fake": "tsx prisma/seed/fake.ts",
-    "db:erd": "tsx prisma/erd.ts"
+    "db:erd": "tsx prisma/erd.ts",
+    "search:reindex": "tsx src/search/reindex.cli.ts"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.6.0",
