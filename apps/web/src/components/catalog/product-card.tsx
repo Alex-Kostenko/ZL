@@ -27,7 +27,7 @@ export function ProductCard({
   const { price } = product;
 
   return (
-    <article className="group relative flex flex-col rounded-md border bg-card p-3 transition-colors hover:border-primary/60 sm:p-4">
+    <article className="group relative flex w-full flex-col rounded-md border bg-card p-3 transition-colors hover:border-primary/60 sm:p-4">
       <div className="relative mb-3 aspect-square overflow-hidden rounded-sm bg-muted">
         {product.image ? (
           <Image

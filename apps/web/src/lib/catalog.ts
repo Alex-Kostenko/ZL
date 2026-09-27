@@ -127,3 +127,27 @@ export async function getSuggestions(
     return null;
   }
 }
+
+/**
+ * A short product row for the home page (sale, new arrivals). Optional content: any failure
+ * yields [] and the section is skipped.
+ */
+export async function getProductRail(
+  locale: Locale,
+  scope: Partial<Pick<SearchFindData['query'], 'sale' | 'antidron' | 'sort'>>,
+  limit = 8,
+): Promise<ProductListItemDto[]> {
+  try {
+    const result = await searchListing({
+      locale,
+      inStock: true,
+      sort: 'relevance',
+      page: 1,
+      limit,
+      ...scope,
+    });
+    return result?.items ?? [];
+  } catch {
+    return [];
+  }
+}

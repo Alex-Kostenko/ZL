@@ -5,7 +5,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { hasLocale, useTranslations } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Breadcrumbs } from '@/components/breadcrumbs';
-import { ProductCard } from '@/components/catalog/product-card';
+import { ProductRail } from '@/components/catalog/product-rail';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { ProductPurchase } from '@/components/product/product-purchase';
 import { VariantProvider } from '@/components/product/variant-context';
@@ -140,30 +140,19 @@ function ProductView({
         </div>
       )}
 
-      {related.length > 0 && (
-        <section aria-labelledby="related-products" className="mt-14">
-          <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
-            <h2 id="related-products" className="text-xl font-bold">
-              {t('related')}
-            </h2>
-            {product.category && (
-              <Link
-                href={categoryHref(product.category.path)}
-                className="text-sm text-primary hover:underline"
-              >
-                {t('allInCategory', { name: product.category.name })}
-              </Link>
-            )}
-          </div>
-          <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4 sm:gap-4">
-            {related.map((item) => (
-              <li key={item.id} className="flex">
-                <ProductCard product={item} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <ProductRail
+        title={t('related')}
+        products={related}
+        more={
+          product.category
+            ? {
+                href: categoryHref(product.category.path),
+                label: t('allInCategory', { name: product.category.name }),
+              }
+            : undefined
+        }
+        className="mt-14"
+      />
     </div>
   );
 }

@@ -10,6 +10,9 @@ import { groupByLetter } from '@/lib/brands';
 import { getBrands } from '@/lib/catalog';
 import { brandHref } from '@/lib/routes';
 
+// Rendered per request until ISR lands in 8.9: the API is not reachable at build time.
+export const dynamic = 'force-dynamic';
+
 type Props = { params: Promise<{ locale: string }> };
 
 async function resolveLocale({ params }: Props): Promise<Locale> {

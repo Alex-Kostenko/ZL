@@ -60,12 +60,45 @@
     "title": "Gear you can trust.",
     "lead": "50,000+ products and 500+ brands for hunting, fishing and the outdoors.",
     "toCatalog": "Shop the catalog",
-    "brands": "Brands",
-    "system": "System",
-    "apiOk": "API: up",
-    "apiDegraded": "API: degraded",
-    "apiDown": "API: unreachable",
-    "latency": "✓ {ms} ms"
+    "metaTitle": "Myslyvska Lavka — hunting, fishing and outdoor gear",
+    "metaDescription": "Online store for hunting, fishing and outdoor gear: 50,000+ products, 500+ brands, live warehouse stock, delivery across Ukraine.",
+    "toSale": "Sale",
+    "catalog": "Catalogue",
+    "allIn": "All in {name}",
+    "showcases": "Special sections",
+    "saleTitle": "Sale",
+    "saleText": "Discounted products in stock. Prices are updated daily.",
+    "saleCta": "Shop the sale",
+    "antidronTitle": "Anti-drone",
+    "antidronText": "Nets, camouflage, detectors and other drone protection gear.",
+    "antidronCta": "Browse",
+    "saleRail": "Deals of the week",
+    "newRail": "New arrivals",
+    "seeAll": "All products",
+    "brandsTitle": "Popular brands",
+    "allBrands": "All brands",
+    "whyTitle": "Why Myslyvska Lavka",
+    "why": {
+      "range": {
+        "title": "50,000+ products",
+        "text": "Firearms, optics, knives, clothing, fishing and camping gear."
+      },
+      "brands": {
+        "title": "500+ brands",
+        "text": "Genuine products from manufacturers, with warranty."
+      },
+      "expertise": {
+        "title": "Expert advice",
+        "text": "We help you pick compatible gear for the task at hand."
+      },
+      "delivery": {
+        "title": "Delivery across Ukraine",
+        "text": "Shipping from the warehouse or pickup at the store."
+      }
+    },
+    "aboutTitle": "About the store",
+    "aboutText": "Myslyvska Lavka is a specialist store for hunting, fishing and outdoor gear. We show current prices and warehouse stock, specifications and compatibility, so your choice is based on facts.",
+    "aboutMore": "More about us"
   },
   "breadcrumbs": {
     "label": "Breadcrumb",
@@ -175,6 +208,142 @@
       "metaTitle": "Anti-drone — drone protection gear",
       "metaDescription": "Anti-drone gear at Myslyvska Lavka: {count, plural, one {# product} other {# products}}. Delivery across Ukraine.",
       "empty": "No products in this section yet."
+    }
+  },
+  "catalog": {
+    "title": "Catalogue",
+    "metaTitle": "Hunting, fishing and outdoor gear catalogue",
+    "metaDescription": "All catalogue sections of Myslyvska Lavka: firearms, optics, knives and flashlights, gear.",
+    "unavailable": "The catalogue is temporarily unavailable. Try reloading the page in a minute."
+  },
+  "pages": {
+    "about": {
+      "title": "About us",
+      "metaDescription": "Myslyvska Lavka is a specialist store for hunting, fishing and outdoor gear.",
+      "lead": "A specialist store for hunting, fishing and outdoor gear. Gear you can trust.",
+      "sections": [
+        {
+          "title": "What we sell",
+          "paragraphs": [
+            "Over 50,000 products from 500+ brands: firearms and ammunition, optics, knives and flashlights, clothing, fishing, camping and drone protection gear."
+          ]
+        },
+        {
+          "title": "How we work",
+          "paragraphs": [
+            "Prices and stock on the website are synchronised with the store’s accounting system. Every product lists its specifications, so you can compare it and check compatibility before buying.",
+            "Our consultants help you choose gear for a specific task: hunting, shooting, fishing or hiking."
+          ]
+        },
+        {
+          "title": "Firearms and ammunition",
+          "paragraphs": [
+            "Firearms, ammunition and other legally regulated goods are sold in accordance with Ukrainian law. Ask our consultants about the purchase conditions."
+          ]
+        }
+      ]
+    },
+    "delivery": {
+      "title": "Delivery",
+      "metaDescription": "Delivery across Ukraine and in-store pickup at Myslyvska Lavka.",
+      "lead": "We ship orders across Ukraine from our warehouse or prepare them for pickup.",
+      "sections": [
+        {
+          "title": "Delivery options",
+          "paragraphs": [
+            "Carrier delivery to a branch, parcel locker or your address. In-store pickup when the item is in stock at the store (shown on the product page)."
+          ]
+        },
+        {
+          "title": "Lead times",
+          "paragraphs": [
+            "Orders with in-stock items are handed to the carrier within 1–2 business days. Delivery time depends on the carrier and your location."
+          ]
+        },
+        {
+          "title": "Cost",
+          "paragraphs": ["Delivery is charged at the carrier’s rates and shown at checkout."]
+        },
+        {
+          "title": "Restricted goods",
+          "paragraphs": [
+            "Firearms, ammunition and other legally regulated goods are handed over in accordance with Ukrainian law. Ask our consultants how to receive them."
+          ]
+        }
+      ]
+    },
+    "payment": {
+      "title": "Payment",
+      "metaDescription": "Payment options at Myslyvska Lavka.",
+      "lead": "Pay online or on delivery.",
+      "sections": [
+        {
+          "title": "Payment options",
+          "paragraphs": [
+            "Online card payment at checkout. Payment on delivery at the carrier branch or in the store. Bank transfer for companies against an invoice."
+          ]
+        },
+        {
+          "title": "Final price",
+          "paragraphs": [
+            "The order total, including discounts and delivery, is recalculated at checkout and shown before you pay."
+          ]
+        },
+        {
+          "title": "Documents",
+          "paragraphs": [
+            "Every order comes with a fiscal receipt. Companies receive an invoice and a delivery note."
+          ]
+        }
+      ]
+    },
+    "warranty": {
+      "title": "Warranty and returns",
+      "metaDescription": "Warranty service, exchanges and returns at Myslyvska Lavka.",
+      "lead": "Products are covered by the manufacturer’s warranty. Exchanges and returns follow the Law of Ukraine “On Consumer Protection”.",
+      "sections": [
+        {
+          "title": "Warranty",
+          "paragraphs": [
+            "The warranty period is stated in the manufacturer’s documents. Keep the receipt and the warranty card, if any, for warranty claims."
+          ]
+        },
+        {
+          "title": "Exchanges and returns",
+          "paragraphs": [
+            "Products of proper quality can be returned or exchanged within 14 days if unused and with their original condition, seals, labels and packaging intact. Some product categories cannot be returned under the law."
+          ]
+        },
+        {
+          "title": "How to contact us",
+          "paragraphs": [
+            "Reach us via the Contacts page: describe the issue and give your order number. We will tell you how to send the item for inspection."
+          ]
+        }
+      ]
+    },
+    "contacts": {
+      "title": "Contacts",
+      "metaDescription": "Myslyvska Lavka contacts: phone, e-mail, store address and opening hours.",
+      "lead": "We answer questions about products, stock, delivery and orders.",
+      "sections": [
+        {
+          "title": "Advice",
+          "paragraphs": [
+            "We help you choose gear and check compatibility and warehouse stock. For order questions, have your order number at hand."
+          ]
+        },
+        {
+          "title": "Pickup",
+          "paragraphs": [
+            "Items in stock at the store can be picked up in person. Store availability is shown on every product page."
+          ]
+        }
+      ],
+      "phone": "Phone",
+      "email": "E-mail",
+      "address": "Store address",
+      "hours": "Opening hours"
     }
   }
 }
