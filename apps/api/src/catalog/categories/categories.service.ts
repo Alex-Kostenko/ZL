@@ -63,8 +63,11 @@ export class CategoriesService {
     await this.cache.del(codes.map(cacheKey));
   }
 
-  /** The whole visible tree for one locale: ~hundreds of rows, cached as one Redis value. */
-  private async localized(locale: string): Promise<LocalizedCategory[]> {
+  /**
+   * The whole visible tree for one locale (flat, menu order): ~hundreds of rows, cached as one
+   * Redis value. Also the source of category paths/names for the search index.
+   */
+  async localized(locale: string): Promise<LocalizedCategory[]> {
     return this.cache.getOrSet(cacheKey(locale), CACHE_TTL_SECONDS, async () => {
       const { defaultLocale } = await this.locales.settings();
       return localizeCategories(await this.loadRows(locale, defaultLocale), locale, defaultLocale);

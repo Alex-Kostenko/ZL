@@ -12,6 +12,7 @@ import { ConfigModule } from './config/config.module';
 import { LoggingModule } from './logging/logging.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { RedisModule } from './redis/redis.module';
     BrandsModule,
     CategoriesModule,
     ProductsModule,
+    SearchModule,
   ],
   controllers: [AppController],
 })

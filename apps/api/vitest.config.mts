@@ -36,6 +36,8 @@ export default defineConfig({
             LOG_LEVEL: 'silent',
             DATABASE_URL: process.env.DATABASE_URL_TEST ?? '',
             REDIS_URL: process.env.REDIS_URL_TEST ?? '',
+            // Own indexes: tests never touch the dev search data.
+            MEILI_INDEX_PREFIX: 'ml_test',
           },
         },
       },

@@ -76,7 +76,7 @@
 - ✅ Swagger показує всі endpoints; картка товару < 100 мс на 50k каталозі; тести на ціни/наявність. **Етап виконано** (картка 10–25 мс, бренд 35–50 мс, вітрини 20–45 мс).
 
 ## Етап 7. Пошук (Meilisearch) 🤖 (M)
-- [ ] 7.1 Схема індексу: title, sku, brand, category, attributes, price, availability; фасети.
+- [x] 7.1 Схема індексу: title, sku, brand, category, attributes, price, availability; фасети.
 - [ ] 7.2 Job повного переіндексування + інкрементальні оновлення після змін товару.
 - [ ] 7.3 `GET /api/v1/search`: typo tolerance, autocomplete, фільтри (категорія, бренд, ціна, атрибути), сортування.
 - [ ] 7.4 Category listing теж через Meilisearch (фасетні фільтри), не через важкий SQL.

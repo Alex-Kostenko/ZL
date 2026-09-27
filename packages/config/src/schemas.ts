@@ -31,6 +31,11 @@ export const apiEnvSchema = z.object({
 
   MEILI_HOST: z.url(),
   MEILI_MASTER_KEY: z.string().min(16),
+  /** Index names are `<prefix>_products_<locale>`; integration tests use their own prefix. */
+  MEILI_INDEX_PREFIX: z
+    .string()
+    .regex(/^[a-z0-9_]+$/)
+    .default('ml'),
 
   S3_ENDPOINT: z.url().optional(), // unset in production → AWS default endpoint
   S3_REGION: z.string().min(1),
