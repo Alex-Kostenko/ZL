@@ -1,3 +1,2 @@
-@import 'tailwindcss';
-
-/* Brand design tokens (brand.md) are added in step 8.1. */
+/* Tailwind + brand design tokens live in the shared UI kit. */
+@import '@ml/ui/globals.css';

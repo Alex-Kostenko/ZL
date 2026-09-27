@@ -1,0 +1,127 @@
+/*
+ * Design tokens of "Мисливська лавка" (.claude/docs/brand.md) mapped onto shadcn/ui variables.
+ * Apps import this file instead of `tailwindcss` directly: `@import '@ml/ui/globals.css';`.
+ * Fonts are provided by the app (next/font) through --font-inter / --font-merriweather.
+ */
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* Class names used by the UI kit itself. */
+@source '../**/*.{ts,tsx}';
+
+/* No dark theme in the brand book: `dark:` only applies inside an explicit `.dark` scope. */
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Brand palette */
+  --steel: #3d677b;
+  --steel-dark: #2f5263;
+  --stone: #a6a7a3;
+  --sand: #d3c7b1;
+  --sand-light: #ebe5d9;
+  --bronze: #c28f48;
+  --terracotta: #9a4832;
+  --ink: #181b1a;
+  --paper: #f5f3ee;
+
+  /* shadcn/ui semantic tokens */
+  --background: var(--paper);
+  --foreground: #252927;
+  --card: #ffffff;
+  --card-foreground: #252927;
+  --popover: #ffffff;
+  --popover-foreground: #252927;
+  --primary: var(--steel);
+  --primary-foreground: #ffffff;
+  --secondary: var(--sand-light);
+  --secondary-foreground: var(--ink);
+  --muted: #ece9e2;
+  --muted-foreground: #6e736f;
+  --accent: var(--sand-light);
+  --accent-foreground: var(--ink);
+  --destructive: var(--terracotta);
+  --destructive-foreground: #ffffff;
+  --border: #d6d3ca;
+  --input: #d6d3ca;
+  --ring: var(--steel);
+
+  --radius: 4px;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-merriweather), ui-serif, Georgia, serif;
+
+  --color-steel: var(--steel);
+  --color-steel-dark: var(--steel-dark);
+  --color-stone: var(--stone);
+  --color-sand: var(--sand);
+  --color-sand-light: var(--sand-light);
+  --color-bronze: var(--bronze);
+  --color-terracotta: var(--terracotta);
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Strict brand shape: 4px everywhere, shadcn's larger radii collapse onto it. */
+  --radius-sm: 2px;
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background font-sans text-foreground;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-serif text-ink;
+  }
+  ::selection {
+    @apply bg-sand text-ink;
+  }
+}
+
+/* Page container: max 1240px content + 24px gutter. */
+@utility container-page {
+  @apply mx-auto w-full max-w-[1288px] px-6;
+}
+
+/* Vertical section rhythm: 75px mobile / 110px desktop. */
+@utility section {
+  @apply py-[75px] md:py-[110px];
+}
+
+@utility eyebrow {
+  @apply text-xs font-bold tracking-[0.16em] text-bronze uppercase;
+}
+
+@utility bg-hero {
+  background:
+    radial-gradient(circle at 80% 20%, rgb(194 143 72 / 0.22), transparent 45%),
+    linear-gradient(135deg, #233d49, #3d677b 48%, #18282e);
+}

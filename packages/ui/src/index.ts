@@ -1,2 +1,2 @@
-// Presentational UI kit; shadcn/ui components are added in step 8.1.
-export {};
+// Presentational UI kit. Import components by subpath: `@ml/ui/components/button`.
+export { cn } from './lib/utils';

@@ -83,7 +83,7 @@
 - ✅ Повний reindex 50k у фоні; пошук з помилкою («свароскі») знаходить Swarovski; фасети < 50 мс.
 
 ## Етап 8. Storefront 🤖 (L)
-- [ ] 8.1 Design tokens з `brand.md` у Tailwind, shadcn/ui init, шрифти Merriweather + Inter.
+- [x] 8.1 Design tokens з `brand.md` у Tailwind, shadcn/ui init, шрифти Merriweather + Inter.
 - [ ] 8.2 Layout: header (мега-меню категорій), пошук, footer, мобільна версія.
 - [ ] 8.3 i18n (uk/ru/en) + маршрутизація за рішенням 1.4.
 - [ ] 8.4 Сторінка категорії: фільтри, сортування, пагінація, URL-стан фільтрів з правильним canonical.
