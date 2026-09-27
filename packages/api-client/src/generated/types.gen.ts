@@ -48,6 +48,83 @@ export type ReadinessDto = {
   checks: ReadinessChecksDto;
 };
 
+export type CategoryImageDto = {
+  url: string;
+  width: number | null;
+  height: number | null;
+};
+
+export type CategoryNodeDto = {
+  id: string;
+  slug: string;
+  /**
+   * Full slug path, e.g. `zbroia/vohnepalna-zbroia`; the storefront URL is `/category/{path}`.
+   */
+  path: string;
+  /**
+   * 0 for root categories.
+   */
+  depth: number;
+  /**
+   * Name in the response locale (falls back to `uk`).
+   */
+  name: string;
+  /**
+   * Lucide icon name for menus.
+   */
+  icon: string | null;
+  image: CategoryImageDto | null;
+  /**
+   * Active subcategories in menu order.
+   */
+  children: Array<CategoryNodeDto>;
+};
+
+export type CategoryTreeDto = {
+  /**
+   * Locale the names are in.
+   */
+  locale: string;
+  /**
+   * Active root categories with their active descendants.
+   */
+  items: Array<CategoryNodeDto>;
+};
+
+export type BreadcrumbDto = {
+  name: string;
+  path: string;
+};
+
+export type CategorySummaryDto = {
+  id: string;
+  slug: string;
+  path: string;
+  name: string;
+  icon: string | null;
+  image: CategoryImageDto | null;
+};
+
+export type CategoryDetailDto = {
+  locale: string;
+  id: string;
+  slug: string;
+  path: string;
+  depth: number;
+  name: string;
+  description: string | null;
+  icon: string | null;
+  image: CategoryImageDto | null;
+  /**
+   * Root → this category (inclusive).
+   */
+  breadcrumbs: Array<BreadcrumbDto>;
+  /**
+   * Direct active subcategories.
+   */
+  children: Array<CategorySummaryDto>;
+};
+
 export type ErrorDetailDto = {
   /**
    * Dot path of the invalid field, e.g. `address.city` or `items.0.qty`.
@@ -151,3 +228,75 @@ export type HealthReadinessResponses = {
 };
 
 export type HealthReadinessResponse = HealthReadinessResponses[keyof HealthReadinessResponses];
+
+export type CategoriesGetTreeData = {
+  body?: never;
+  headers?: {
+    /**
+     * Used when `locale` is absent
+     */
+    'Accept-Language'?: string;
+  };
+  path?: never;
+  query?: {
+    /**
+     * Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.
+     */
+    locale?: string;
+  };
+  url: '/api/v1/categories';
+};
+
+export type CategoriesGetTreeErrors = {
+  /**
+   * Error (unified format, see `code`)
+   */
+  default: ErrorResponseDto;
+};
+
+export type CategoriesGetTreeError = CategoriesGetTreeErrors[keyof CategoriesGetTreeErrors];
+
+export type CategoriesGetTreeResponses = {
+  200: CategoryTreeDto;
+};
+
+export type CategoriesGetTreeResponse =
+  CategoriesGetTreeResponses[keyof CategoriesGetTreeResponses];
+
+export type CategoriesGetByPathData = {
+  body?: never;
+  headers?: {
+    /**
+     * Used when `locale` is absent
+     */
+    'Accept-Language'?: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.
+     */
+    locale?: string;
+    /**
+     * Slug path without leading/trailing slashes.
+     */
+    path: string;
+  };
+  url: '/api/v1/categories/by-path';
+};
+
+export type CategoriesGetByPathErrors = {
+  /**
+   * Error (unified format, see `code`)
+   */
+  default: ErrorResponseDto;
+};
+
+export type CategoriesGetByPathError = CategoriesGetByPathErrors[keyof CategoriesGetByPathErrors];
+
+export type CategoriesGetByPathResponses = {
+  200: CategoryDetailDto;
+};
+
+export type CategoriesGetByPathResponse =
+  CategoriesGetByPathResponses[keyof CategoriesGetByPathResponses];

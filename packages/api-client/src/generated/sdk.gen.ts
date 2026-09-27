@@ -6,6 +6,12 @@ import type {
   AppGetRootData,
   AppGetRootErrors,
   AppGetRootResponses,
+  CategoriesGetByPathData,
+  CategoriesGetByPathErrors,
+  CategoriesGetByPathResponses,
+  CategoriesGetTreeData,
+  CategoriesGetTreeErrors,
+  CategoriesGetTreeResponses,
   HealthLivenessData,
   HealthLivenessErrors,
   HealthLivenessResponses,
@@ -64,3 +70,27 @@ export const healthReadiness = <ThrowOnError extends boolean = false>(
     url: '/health/ready',
     ...options,
   });
+
+/**
+ * Active category tree (menu, sitemap)
+ */
+export const categoriesGetTree = <ThrowOnError extends boolean = false>(
+  options?: Options<CategoriesGetTreeData, ThrowOnError>,
+): RequestResult<CategoriesGetTreeResponses, CategoriesGetTreeErrors, ThrowOnError> =>
+  (options?.client ?? client).get<
+    CategoriesGetTreeResponses,
+    CategoriesGetTreeErrors,
+    ThrowOnError
+  >({ url: '/api/v1/categories', ...options });
+
+/**
+ * Category page by slug path, with breadcrumbs and subcategories
+ */
+export const categoriesGetByPath = <ThrowOnError extends boolean = false>(
+  options: Options<CategoriesGetByPathData, ThrowOnError>,
+): RequestResult<CategoriesGetByPathResponses, CategoriesGetByPathErrors, ThrowOnError> =>
+  (options.client ?? client).get<
+    CategoriesGetByPathResponses,
+    CategoriesGetByPathErrors,
+    ThrowOnError
+  >({ url: '/api/v1/categories/by-path', ...options });

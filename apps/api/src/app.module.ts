@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
+import { CacheModule } from './cache/cache.module';
+import { CategoriesModule } from './catalog/categories/categories.module';
 import { ErrorsModule } from './common/errors/errors.module';
 import { HealthModule } from './health/health.module';
+import { I18nModule } from './i18n/i18n.module';
 import { JobsModule } from './jobs/jobs.module';
 import { ConfigModule } from './config/config.module';
 import { LoggingModule } from './logging/logging.module';
@@ -15,8 +18,11 @@ import { RedisModule } from './redis/redis.module';
     ErrorsModule,
     PrismaModule,
     RedisModule,
+    CacheModule,
+    I18nModule,
     JobsModule,
     HealthModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
 })

@@ -106,6 +106,124 @@
           "system"
         ]
       }
+    },
+    "/api/v1/categories": {
+      "get": {
+        "operationId": "Categories_getTree",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Used when `locale` is absent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.",
+            "schema": {
+              "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})?$",
+              "example": "ru",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryTreeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error (unified format, see `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Active category tree (menu, sitemap)",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/api/v1/categories/by-path": {
+      "get": {
+        "operationId": "Categories_getByPath",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Used when `locale` is absent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.",
+            "schema": {
+              "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})?$",
+              "example": "ru",
+              "type": "string"
+            }
+          },
+          {
+            "name": "path",
+            "required": true,
+            "in": "query",
+            "description": "Slug path without leading/trailing slashes.",
+            "schema": {
+              "maxLength": 1000,
+              "pattern": "^[a-z0-9-]+(\\/[a-z0-9-]+)*$",
+              "example": "zbroia/vohnepalna-zbroia",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDetailDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error (unified format, see `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Category page by slug path, with breadcrumbs and subcategories",
+        "tags": [
+          "catalog"
+        ]
+      }
     }
   },
   "info": {
@@ -211,6 +329,221 @@
         "required": [
           "status",
           "checks"
+        ]
+      },
+      "CategoryImageDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "width": {
+            "type": "number",
+            "nullable": true
+          },
+          "height": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "url",
+          "width",
+          "height"
+        ]
+      },
+      "CategoryNodeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string",
+            "description": "Full slug path, e.g. `zbroia/vohnepalna-zbroia`; the storefront URL is `/category/{path}`."
+          },
+          "depth": {
+            "type": "number",
+            "description": "0 for root categories."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name in the response locale (falls back to `uk`)."
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true,
+            "description": "Lucide icon name for menus."
+          },
+          "image": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CategoryImageDto"
+              }
+            ]
+          },
+          "children": {
+            "description": "Active subcategories in menu order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryNodeDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "path",
+          "depth",
+          "name",
+          "icon",
+          "image",
+          "children"
+        ]
+      },
+      "CategoryTreeDto": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string",
+            "description": "Locale the names are in."
+          },
+          "items": {
+            "description": "Active root categories with their active descendants.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryNodeDto"
+            }
+          }
+        },
+        "required": [
+          "locale",
+          "items"
+        ]
+      },
+      "BreadcrumbDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "path"
+        ]
+      },
+      "CategorySummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true
+          },
+          "image": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CategoryImageDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "path",
+          "name",
+          "icon",
+          "image"
+        ]
+      },
+      "CategoryDetailDto": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "depth": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true
+          },
+          "image": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CategoryImageDto"
+              }
+            ]
+          },
+          "breadcrumbs": {
+            "description": "Root → this category (inclusive).",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BreadcrumbDto"
+            }
+          },
+          "children": {
+            "description": "Direct active subcategories.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategorySummaryDto"
+            }
+          }
+        },
+        "required": [
+          "locale",
+          "id",
+          "slug",
+          "path",
+          "depth",
+          "name",
+          "description",
+          "icon",
+          "image",
+          "breadcrumbs",
+          "children"
         ]
       },
       "ErrorDetailDto": {

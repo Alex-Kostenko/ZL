@@ -68,11 +68,11 @@
 - ✅ `npm run db:reset` створює БД з категоріями й 50k товарів < 3 хв; ERD-діаграма згенерована в docs. **Етап виконано** (reset ≈ 87 с; ERD — `docs/database/erd.md`).
 
 ## Етап 6. Публічний Catalog API 🤖 (M)
-- [ ] 6.1 Categories: дерево, за slug-шляхом, breadcrumbs, кеш у Redis + інвалідація.
+- [x] 6.1 Categories: дерево, за slug-шляхом, breadcrumbs, кеш у Redis + інвалідація.
 - [ ] 6.2 Products: список з пагінацією, картка за slug (з варіантами, атрибутами, ціною, наявністю).
 - [ ] 6.3 Brands: список, сторінка бренду; вітрини `/sale`, `/antidron`.
 - [ ] 6.4 PricingService (актуальна ціна) і InventoryService (`available`) + unit-тести.
-- [ ] 6.5 Локалізація відповідей (`?locale=` / header) з fallback на `uk`.
+- [ ] 6.5 Локалізація відповідей (`?locale=` / header) з fallback на `uk`. _(Основа готова в 6.1: `LocaleService`, `LocaleQueryDto`; лишилось застосувати до products/brands.)_
 - ✅ Swagger показує всі endpoints; картка товару < 100 мс на 50k каталозі; тести на ціни/наявність.
 
 ## Етап 7. Пошук (Meilisearch) 🤖 (M)
