@@ -14,7 +14,7 @@ export async function createTestApp(): Promise<INestApplication> {
 }
 
 /** Tables filled by migrations (reference data) that tests must never wipe. */
-const PRESERVED_TABLES = new Set(['_prisma_migrations', 'locales']);
+const PRESERVED_TABLES = new Set(['_prisma_migrations', 'locales', 'price_types']);
 
 /** Empties every application table (keeps migration history and reference data). Call in `beforeEach`. */
 export async function resetDatabase(prisma: PrismaService): Promise<void> {
