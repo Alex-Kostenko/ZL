@@ -12,3 +12,4 @@ paths:
 - Перелік таблиць: `.claude/docs/spec/infra.md` §32; моделі: `catalog.md`.
 - CHECK, generated columns, часткові індекси Prisma не описує: `migrate dev --create-only` → дописати SQL у кінець міграції (секція «Hand-written») → застосувати → `prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script` має бути порожнім (без drift).
 - Довідкові дані (locales, price_types) вставляються міграцією; у тестах їх не чистити (`PRESERVED_TABLES` у `test/utils/test-app.ts`).
+- Після кожної міграції: `npm run db:erd` (оновлює `docs/database/erd.md`) і закомітити разом із міграцією.

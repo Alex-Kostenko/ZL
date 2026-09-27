@@ -64,8 +64,8 @@
 - [x] 5.4 Warehouse, Inventory, Price (типи цін, validFrom/To), Media, ProductMedia.
 - [x] 5.5 integration_mappings, sync_logs, redirects, seo_metadata.
 - [x] 5.6 Seed: дерево категорій з `categories.md`, склади, атрибути.
-- [ ] 5.7 **Генератор фейкових даних: 50 000 товарів**, 500 брендів, ціни, залишки — щоб одразу тестувати продуктивність.
-- ✅ `npm run db:reset` створює БД з категоріями й 50k товарів < 3 хв; ERD-діаграма згенерована в docs.
+- [x] 5.7 **Генератор фейкових даних: 50 000 товарів**, 500 брендів, ціни, залишки — щоб одразу тестувати продуктивність.
+- ✅ `npm run db:reset` створює БД з категоріями й 50k товарів < 3 хв; ERD-діаграма згенерована в docs. **Етап виконано** (reset ≈ 87 с; ERD — `docs/database/erd.md`).
 
 ## Етап 6. Публічний Catalog API 🤖 (M)
 - [ ] 6.1 Categories: дерево, за slug-шляхом, breadcrumbs, кеш у Redis + інвалідація.

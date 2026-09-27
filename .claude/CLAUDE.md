@@ -58,4 +58,4 @@ infrastructure/ docker, scripts
 - Нове архітектурне рішення → коротко допиши в `.claude/docs/decisions.md`.
 
 ## Команди
-`npm run dev` · `npm run db:migrate` · `npm run db:seed` · `npm run db:reset` · `npm run api:generate` · `npm run lint` · `npm run typecheck` · `npm test` · пакет у workspace: `npm i <pkg> -w apps/api` · `npm run format` · `docker compose up -d` (з етапу 3). Пакети: `@ml/*`; web :3000, api :4000
+`npm run dev` · `npm run db:migrate` · `npm run db:seed` · `npm run db:reset` (+50k фейкових товарів) · `npm run db:erd` · `npm run api:generate` · `npm run lint` · `npm run typecheck` · `npm test` · пакет у workspace: `npm i <pkg> -w apps/api` · `npm run format` · `docker compose up -d` (з етапу 3). Пакети: `@ml/*`; web :3000, api :4000
