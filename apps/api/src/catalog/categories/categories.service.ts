@@ -6,13 +6,15 @@ import { API_ENV } from '../../config/config.module';
 import { LocaleService } from '../../i18n/locale.service';
 import { mediaUrl } from '../../media/media-url';
 import { PrismaService } from '../../prisma/prisma.service';
-import type { CategoryDetailDto, CategoryTreeDto } from './categories.dto';
+import type { BreadcrumbDto, CategoryDetailDto, CategoryTreeDto } from './categories.dto';
 import {
+  breadcrumbsOf,
   buildTree,
   type CategoryRow,
   findByPath,
   type LocalizedCategory,
   localizeCategories,
+  subtreeIds,
 } from './category-tree';
 
 /** Safety net only: writes must call `invalidateCache()`. */
@@ -38,6 +40,18 @@ export class CategoriesService {
       throw new AppException(ErrorCode.NOT_FOUND, 'Category not found', HttpStatus.NOT_FOUND);
     }
     return { locale, ...category };
+  }
+
+  /** Breadcrumbs of a category (e.g. a product's primary one); empty when it is hidden. */
+  async breadcrumbs(locale: string, categoryId: string): Promise<BreadcrumbDto[]> {
+    return breadcrumbsOf(await this.localized(locale), categoryId);
+  }
+
+  /** A visible category with its visible descendants (product listing filter), or `null`. */
+  async subtreeIds(path: string): Promise<string[] | null> {
+    // Visibility does not depend on the language, so the default-locale snapshot serves all.
+    const { defaultLocale } = await this.locales.settings();
+    return subtreeIds(await this.localized(defaultLocale), path);
   }
 
   /**

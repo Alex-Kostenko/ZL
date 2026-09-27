@@ -224,6 +224,167 @@
           "catalog"
         ]
       }
+    },
+    "/api/v1/products": {
+      "get": {
+        "operationId": "Products_list",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Used when `locale` is absent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.",
+            "schema": {
+              "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})?$",
+              "example": "ru",
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "description": "1-based page number.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "description": "Page size.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 24,
+              "type": "number"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Category slug path; includes products of all its subcategories.",
+            "schema": {
+              "maxLength": 1000,
+              "pattern": "^[a-z0-9-]+(\\/[a-z0-9-]+)*$",
+              "example": "zbroia/vohnepalna-zbroia",
+              "type": "string"
+            }
+          },
+          {
+            "name": "brand",
+            "required": false,
+            "in": "query",
+            "description": "Brand slug.",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductListDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error (unified format, see `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Published products, newest first, by category subtree and/or brand",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/api/v1/products/{slug}": {
+      "get": {
+        "operationId": "Products_bySlug",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Used when `locale` is absent",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.",
+            "schema": {
+              "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})?$",
+              "example": "ru",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductDetailDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error (unified format, see `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Product page: variants, characteristics, gallery, price, stock",
+        "tags": [
+          "catalog"
+        ]
+      }
     }
   },
   "info": {
@@ -544,6 +705,486 @@
           "image",
           "breadcrumbs",
           "children"
+        ]
+      },
+      "ProductBrandDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name"
+        ]
+      },
+      "ProductImageDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "width": {
+            "type": "number",
+            "nullable": true
+          },
+          "height": {
+            "type": "number",
+            "nullable": true
+          },
+          "alt": {
+            "type": "string",
+            "description": "Alt text in the response locale; the product title when none is set."
+          },
+          "variantId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Set when the image shows one variant (e.g. a colour)."
+          }
+        },
+        "required": [
+          "url",
+          "width",
+          "height",
+          "alt",
+          "variantId"
+        ]
+      },
+      "PriceDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "ISO 4217, e.g. `UAH`."
+          },
+          "amount": {
+            "type": "string",
+            "description": "Selling price (`salePrice ?? price`).",
+            "example": "1299.00"
+          },
+          "oldAmount": {
+            "type": "string",
+            "nullable": true,
+            "description": "Crossed-out reference price; present only when greater than `amount`.",
+            "example": 1599
+          },
+          "discountPercent": {
+            "type": "number",
+            "nullable": true,
+            "description": "Whole-percent discount from `oldAmount`, e.g. 19."
+          }
+        },
+        "required": [
+          "currency",
+          "amount",
+          "oldAmount",
+          "discountPercent"
+        ]
+      },
+      "ProductListItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "brand": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProductBrandDto"
+              }
+            ]
+          },
+          "image": {
+            "nullable": true,
+            "description": "Primary image (or the first one).",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProductImageDto"
+              }
+            ]
+          },
+          "price": {
+            "nullable": true,
+            "description": "Lowest current price among active variants; `null` when none is priced.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PriceDto"
+              }
+            ]
+          },
+          "hasPriceRange": {
+            "type": "boolean",
+            "description": "Variants differ in price: show the price as \"from\"."
+          },
+          "available": {
+            "type": "number",
+            "description": "Sum over active variants and active warehouses."
+          },
+          "inStock": {
+            "type": "boolean"
+          },
+          "isSale": {
+            "type": "boolean"
+          },
+          "isAntidron": {
+            "type": "boolean"
+          },
+          "variantCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "sku",
+          "title",
+          "brand",
+          "image",
+          "price",
+          "hasPriceRange",
+          "available",
+          "inStock",
+          "isSale",
+          "isAntidron",
+          "variantCount"
+        ]
+      },
+      "ProductListDto": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductListItemDto"
+            }
+          },
+          "page": {
+            "type": "number"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          },
+          "totalPages": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "locale",
+          "items",
+          "page",
+          "limit",
+          "total",
+          "totalPages"
+        ]
+      },
+      "ProductCategoryRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "path",
+          "name"
+        ]
+      },
+      "AttributeValueDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Display text in the response locale, e.g. `12 кал.`, `3–9`, `Так`. Units are separate."
+          },
+          "code": {
+            "type": "string",
+            "nullable": true,
+            "description": "Option code for SELECT / MULTI_SELECT (used in filter URLs)."
+          }
+        },
+        "required": [
+          "text",
+          "code"
+        ]
+      },
+      "ProductAttributeDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true,
+            "description": "Localized unit, e.g. `мм`."
+          },
+          "type": {
+            "type": "string",
+            "description": "STRING, NUMBER, BOOLEAN, SELECT, MULTI_SELECT or RANGE."
+          },
+          "values": {
+            "description": "Several only for MULTI_SELECT.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttributeValueDto"
+            }
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "unit",
+          "type",
+          "values"
+        ]
+      },
+      "WarehouseStockDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "available": {
+            "type": "number",
+            "description": "Units available for sale in this warehouse (never negative)."
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "available"
+        ]
+      },
+      "StockDto": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "number",
+            "description": "Units available for sale across active warehouses (never negative)."
+          },
+          "inStock": {
+            "type": "boolean"
+          },
+          "warehouses": {
+            "description": "Active warehouses with stock, in display order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WarehouseStockDto"
+            }
+          }
+        },
+        "required": [
+          "available",
+          "inStock",
+          "warehouses"
+        ]
+      },
+      "ProductVariantDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "barcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "options": {
+            "description": "Variant-distinguishing characteristics (calibre, size, colour).",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductAttributeDto"
+            }
+          },
+          "price": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PriceDto"
+              }
+            ]
+          },
+          "stock": {
+            "$ref": "#/components/schemas/StockDto"
+          }
+        },
+        "required": [
+          "id",
+          "sku",
+          "barcode",
+          "options",
+          "price",
+          "stock"
+        ]
+      },
+      "ProductDetailDto": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "shortDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "brand": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProductBrandDto"
+              }
+            ]
+          },
+          "category": {
+            "nullable": true,
+            "description": "Primary category (canonical URL, breadcrumbs); `null` when it is hidden.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProductCategoryRefDto"
+              }
+            ]
+          },
+          "breadcrumbs": {
+            "description": "Root → primary category.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BreadcrumbDto"
+            }
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductImageDto"
+            }
+          },
+          "attributes": {
+            "description": "Product-level characteristics, in display order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductAttributeDto"
+            }
+          },
+          "variants": {
+            "description": "Active variants, in display order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductVariantDto"
+            }
+          },
+          "price": {
+            "nullable": true,
+            "description": "Lowest current variant price.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PriceDto"
+              }
+            ]
+          },
+          "hasPriceRange": {
+            "type": "boolean"
+          },
+          "stock": {
+            "description": "Sum over active variants.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StockDto"
+              }
+            ]
+          },
+          "isSale": {
+            "type": "boolean"
+          },
+          "isAntidron": {
+            "type": "boolean"
+          },
+          "publishedAt": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "locale",
+          "id",
+          "slug",
+          "sku",
+          "title",
+          "shortDescription",
+          "description",
+          "brand",
+          "category",
+          "breadcrumbs",
+          "images",
+          "attributes",
+          "variants",
+          "price",
+          "hasPriceRange",
+          "stock",
+          "isSale",
+          "isAntidron",
+          "publishedAt"
         ]
       },
       "ErrorDetailDto": {

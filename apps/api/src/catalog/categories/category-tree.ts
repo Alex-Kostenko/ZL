@@ -1,3 +1,4 @@
+import { translator } from '../../i18n/translate';
 import type {
   BreadcrumbDto,
   CategoryDetailDto,
@@ -56,8 +57,7 @@ export function localizeCategories(
   return rows
     .filter(isVisible)
     .map((row) => {
-      const own = row.translations.find((t) => t.locale === locale);
-      const base = row.translations.find((t) => t.locale === fallback);
+      const t = translator(row.translations, locale, fallback);
       return {
         position: row.position,
         category: {
@@ -66,8 +66,8 @@ export function localizeCategories(
           slug: row.slug,
           path: row.path,
           depth: row.depth,
-          name: own?.name ?? base?.name ?? row.slug,
-          description: own?.description ?? base?.description ?? null,
+          name: t('name') ?? row.slug,
+          description: t('description'),
           icon: row.icon,
           image: row.image,
         },
@@ -113,12 +113,7 @@ export function findByPath(
   const category = categories.find((c) => c.path === path);
   if (!category) return null;
 
-  const byId = new Map(categories.map((c) => [c.id, c]));
-  const breadcrumbs: BreadcrumbDto[] = [];
-  for (let c: LocalizedCategory | undefined = category; c;) {
-    breadcrumbs.unshift({ name: c.name, path: c.path });
-    c = c.parentId ? byId.get(c.parentId) : undefined;
-  }
+  const breadcrumbs = breadcrumbsOf(categories, category.id);
 
   const children: CategorySummaryDto[] = categories
     .filter((c) => c.parentId === category.id)
@@ -133,4 +128,23 @@ export function findByPath(
 
   const { parentId: _parentId, ...rest } = category;
   return { ...rest, breadcrumbs, children };
+}
+
+/** Root → category (inclusive); empty when the category is unknown or hidden. */
+export function breadcrumbsOf(categories: LocalizedCategory[], id: string): BreadcrumbDto[] {
+  const byId = new Map(categories.map((c) => [c.id, c]));
+  const breadcrumbs: BreadcrumbDto[] = [];
+  for (let c = byId.get(id); c; c = c.parentId ? byId.get(c.parentId) : undefined) {
+    breadcrumbs.unshift({ name: c.name, path: c.path });
+  }
+  return breadcrumbs;
+}
+
+/** Ids of a visible category and all its visible descendants, or `null` when it is hidden. */
+export function subtreeIds(categories: LocalizedCategory[], path: string): string[] | null {
+  const prefix = `${path}/`;
+  const ids = categories
+    .filter((c) => c.path === path || c.path.startsWith(prefix))
+    .map((c) => c.id);
+  return ids.length ? ids : null;
 }

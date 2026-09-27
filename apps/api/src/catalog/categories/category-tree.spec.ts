@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { buildTree, type CategoryRow, findByPath, localizeCategories } from './category-tree';
+import {
+  breadcrumbsOf,
+  buildTree,
+  type CategoryRow,
+  findByPath,
+  localizeCategories,
+  subtreeIds,
+} from './category-tree';
 
 function row(
   id: string,
@@ -71,6 +78,26 @@ describe('buildTree', () => {
     const weapons = tree[1]!;
     expect(weapons.children.map((n) => n.path)).toEqual(['zbroia/luky', 'zbroia/nozhi']);
     expect(weapons.children[0]!.children.map((n) => n.path)).toEqual(['zbroia/luky/strily']);
+  });
+});
+
+describe('breadcrumbsOf / subtreeIds', () => {
+  const list = localizeCategories(rows, 'uk', 'uk');
+
+  it('builds breadcrumbs by id and returns none for hidden categories', () => {
+    expect(breadcrumbsOf(list, 'a2x').map((b) => b.path)).toEqual([
+      'zbroia',
+      'zbroia/luky',
+      'zbroia/luky/strily',
+    ]);
+    expect(breadcrumbsOf(list, 'h1')).toEqual([]);
+  });
+
+  it('collects visible descendants without matching sibling prefixes', () => {
+    expect(subtreeIds(list, 'zbroia/luky')?.sort()).toEqual(['a2', 'a2x']);
+    expect(subtreeIds(list, 'zbroia')?.sort()).toEqual(['a', 'a1', 'a2', 'a2x']);
+    expect(subtreeIds(list, 'zbroia/lu')).toBeNull();
+    expect(subtreeIds(list, 'zbroia/prykhovana')).toBeNull();
   });
 });
 

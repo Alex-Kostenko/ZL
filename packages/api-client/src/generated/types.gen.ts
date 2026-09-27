@@ -125,6 +125,189 @@ export type CategoryDetailDto = {
   children: Array<CategorySummaryDto>;
 };
 
+export type ProductBrandDto = {
+  id: string;
+  slug: string;
+  name: string;
+};
+
+export type ProductImageDto = {
+  url: string;
+  width: number | null;
+  height: number | null;
+  /**
+   * Alt text in the response locale; the product title when none is set.
+   */
+  alt: string;
+  /**
+   * Set when the image shows one variant (e.g. a colour).
+   */
+  variantId: string | null;
+};
+
+export type PriceDto = {
+  /**
+   * ISO 4217, e.g. `UAH`.
+   */
+  currency: string;
+  /**
+   * Selling price (`salePrice ?? price`).
+   */
+  amount: string;
+  /**
+   * Crossed-out reference price; present only when greater than `amount`.
+   */
+  oldAmount: string | null;
+  /**
+   * Whole-percent discount from `oldAmount`, e.g. 19.
+   */
+  discountPercent: number | null;
+};
+
+export type ProductListItemDto = {
+  id: string;
+  slug: string;
+  sku: string;
+  title: string;
+  brand: ProductBrandDto | null;
+  /**
+   * Primary image (or the first one).
+   */
+  image: ProductImageDto | null;
+  /**
+   * Lowest current price among active variants; `null` when none is priced.
+   */
+  price: PriceDto | null;
+  /**
+   * Variants differ in price: show the price as "from".
+   */
+  hasPriceRange: boolean;
+  /**
+   * Sum over active variants and active warehouses.
+   */
+  available: number;
+  inStock: boolean;
+  isSale: boolean;
+  isAntidron: boolean;
+  variantCount: number;
+};
+
+export type ProductListDto = {
+  locale: string;
+  items: Array<ProductListItemDto>;
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};
+
+export type ProductCategoryRefDto = {
+  id: string;
+  path: string;
+  name: string;
+};
+
+export type AttributeValueDto = {
+  /**
+   * Display text in the response locale, e.g. `12 кал.`, `3–9`, `Так`. Units are separate.
+   */
+  text: string;
+  /**
+   * Option code for SELECT / MULTI_SELECT (used in filter URLs).
+   */
+  code: string | null;
+};
+
+export type ProductAttributeDto = {
+  code: string;
+  name: string;
+  /**
+   * Localized unit, e.g. `мм`.
+   */
+  unit: string | null;
+  /**
+   * STRING, NUMBER, BOOLEAN, SELECT, MULTI_SELECT or RANGE.
+   */
+  type: string;
+  /**
+   * Several only for MULTI_SELECT.
+   */
+  values: Array<AttributeValueDto>;
+};
+
+export type WarehouseStockDto = {
+  code: string;
+  name: string;
+  /**
+   * Units available for sale in this warehouse (never negative).
+   */
+  available: number;
+};
+
+export type StockDto = {
+  /**
+   * Units available for sale across active warehouses (never negative).
+   */
+  available: number;
+  inStock: boolean;
+  /**
+   * Active warehouses with stock, in display order.
+   */
+  warehouses: Array<WarehouseStockDto>;
+};
+
+export type ProductVariantDto = {
+  id: string;
+  sku: string;
+  barcode: string | null;
+  /**
+   * Variant-distinguishing characteristics (calibre, size, colour).
+   */
+  options: Array<ProductAttributeDto>;
+  price: PriceDto | null;
+  stock: StockDto;
+};
+
+export type ProductDetailDto = {
+  locale: string;
+  id: string;
+  slug: string;
+  sku: string;
+  title: string;
+  shortDescription: string | null;
+  description: string | null;
+  brand: ProductBrandDto | null;
+  /**
+   * Primary category (canonical URL, breadcrumbs); `null` when it is hidden.
+   */
+  category: ProductCategoryRefDto | null;
+  /**
+   * Root → primary category.
+   */
+  breadcrumbs: Array<BreadcrumbDto>;
+  images: Array<ProductImageDto>;
+  /**
+   * Product-level characteristics, in display order.
+   */
+  attributes: Array<ProductAttributeDto>;
+  /**
+   * Active variants, in display order.
+   */
+  variants: Array<ProductVariantDto>;
+  /**
+   * Lowest current variant price.
+   */
+  price: PriceDto | null;
+  hasPriceRange: boolean;
+  /**
+   * Sum over active variants.
+   */
+  stock: StockDto;
+  isSale: boolean;
+  isAntidron: boolean;
+  publishedAt: string | null;
+};
+
 export type ErrorDetailDto = {
   /**
    * Dot path of the invalid field, e.g. `address.city` or `items.0.qty`.
@@ -300,3 +483,87 @@ export type CategoriesGetByPathResponses = {
 
 export type CategoriesGetByPathResponse =
   CategoriesGetByPathResponses[keyof CategoriesGetByPathResponses];
+
+export type ProductsListData = {
+  body?: never;
+  headers?: {
+    /**
+     * Used when `locale` is absent
+     */
+    'Accept-Language'?: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.
+     */
+    locale?: string;
+    /**
+     * 1-based page number.
+     */
+    page: number;
+    /**
+     * Page size.
+     */
+    limit: number;
+    /**
+     * Category slug path; includes products of all its subcategories.
+     */
+    category?: string;
+    /**
+     * Brand slug.
+     */
+    brand?: string;
+  };
+  url: '/api/v1/products';
+};
+
+export type ProductsListErrors = {
+  /**
+   * Error (unified format, see `code`)
+   */
+  default: ErrorResponseDto;
+};
+
+export type ProductsListError = ProductsListErrors[keyof ProductsListErrors];
+
+export type ProductsListResponses = {
+  200: ProductListDto;
+};
+
+export type ProductsListResponse = ProductsListResponses[keyof ProductsListResponses];
+
+export type ProductsBySlugData = {
+  body?: never;
+  headers?: {
+    /**
+     * Used when `locale` is absent
+     */
+    'Accept-Language'?: string;
+  };
+  path: {
+    slug: string;
+  };
+  query?: {
+    /**
+     * Response language (`uk`, `ru`, `en`). Unsupported → `Accept-Language` → `uk`.
+     */
+    locale?: string;
+  };
+  url: '/api/v1/products/{slug}';
+};
+
+export type ProductsBySlugErrors = {
+  /**
+   * Error (unified format, see `code`)
+   */
+  default: ErrorResponseDto;
+};
+
+export type ProductsBySlugError = ProductsBySlugErrors[keyof ProductsBySlugErrors];
+
+export type ProductsBySlugResponses = {
+  200: ProductDetailDto;
+};
+
+export type ProductsBySlugResponse = ProductsBySlugResponses[keyof ProductsBySlugResponses];

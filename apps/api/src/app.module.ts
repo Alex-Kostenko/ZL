@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { CacheModule } from './cache/cache.module';
 import { CategoriesModule } from './catalog/categories/categories.module';
+import { ProductsModule } from './catalog/products/products.module';
 import { ErrorsModule } from './common/errors/errors.module';
 import { HealthModule } from './health/health.module';
 import { I18nModule } from './i18n/i18n.module';
@@ -23,6 +24,7 @@ import { RedisModule } from './redis/redis.module';
     JobsModule,
     HealthModule,
     CategoriesModule,
+    ProductsModule,
   ],
   controllers: [AppController],
 })

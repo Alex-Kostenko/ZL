@@ -18,6 +18,12 @@ import type {
   HealthReadinessData,
   HealthReadinessErrors,
   HealthReadinessResponses,
+  ProductsBySlugData,
+  ProductsBySlugErrors,
+  ProductsBySlugResponses,
+  ProductsListData,
+  ProductsListErrors,
+  ProductsListResponses,
 } from './types.gen';
 
 export type Options<
@@ -94,3 +100,25 @@ export const categoriesGetByPath = <ThrowOnError extends boolean = false>(
     CategoriesGetByPathErrors,
     ThrowOnError
   >({ url: '/api/v1/categories/by-path', ...options });
+
+/**
+ * Published products, newest first, by category subtree and/or brand
+ */
+export const productsList = <ThrowOnError extends boolean = false>(
+  options: Options<ProductsListData, ThrowOnError>,
+): RequestResult<ProductsListResponses, ProductsListErrors, ThrowOnError> =>
+  (options.client ?? client).get<ProductsListResponses, ProductsListErrors, ThrowOnError>({
+    url: '/api/v1/products',
+    ...options,
+  });
+
+/**
+ * Product page: variants, characteristics, gallery, price, stock
+ */
+export const productsBySlug = <ThrowOnError extends boolean = false>(
+  options: Options<ProductsBySlugData, ThrowOnError>,
+): RequestResult<ProductsBySlugResponses, ProductsBySlugErrors, ThrowOnError> =>
+  (options.client ?? client).get<ProductsBySlugResponses, ProductsBySlugErrors, ThrowOnError>({
+    url: '/api/v1/products/{slug}',
+    ...options,
+  });
