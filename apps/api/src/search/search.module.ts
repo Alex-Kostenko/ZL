@@ -4,6 +4,7 @@ import { Meilisearch } from 'meilisearch';
 import { BrandsModule } from '../catalog/brands/brands.module';
 import { CategoriesModule } from '../catalog/categories/categories.module';
 import { InventoryModule } from '../catalog/inventory/inventory.module';
+import { ProductsModule } from '../catalog/products/products.module';
 import { PricingModule } from '../catalog/pricing/pricing.module';
 import { API_ENV } from '../config/config.module';
 import { ProductDocumentsService } from './product-documents.service';
@@ -18,7 +19,7 @@ import { SearchIndexer } from './search-indexer.service';
  * The client is lazy (plain HTTP per call), so the API starts even when Meilisearch is down.
  */
 @Module({
-  imports: [BrandsModule, CategoriesModule, PricingModule, InventoryModule],
+  imports: [BrandsModule, CategoriesModule, PricingModule, InventoryModule, ProductsModule],
   controllers: [SearchController],
   providers: [
     {

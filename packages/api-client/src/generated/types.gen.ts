@@ -454,6 +454,11 @@ export type SearchResultDto = {
    */
   total: number;
   totalPages: number;
+  /**
+   * Search engine unavailable: browsing fell back to SQL (newest first; category, brand, flags
+   * and stock honoured; price/attribute filters, sorting and facet counts are not).
+   */
+  degraded: boolean;
   facets: SearchFacetsDto;
 };
 
@@ -471,6 +476,10 @@ export type SuggestResultDto = {
   locale: string;
   query: string;
   products: Array<ProductListItemDto>;
+  /**
+   * Search engine unavailable: `products` is empty, categories and brands still match.
+   */
+  degraded: boolean;
   /**
    * Up to 5 visible categories whose name contains the query.
    */

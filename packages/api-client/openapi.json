@@ -1967,6 +1967,10 @@
           "totalPages": {
             "type": "number"
           },
+          "degraded": {
+            "type": "boolean",
+            "description": "Search engine unavailable: browsing fell back to SQL (newest first; category, brand, flags\nand stock honoured; price/attribute filters, sorting and facet counts are not)."
+          },
           "facets": {
             "$ref": "#/components/schemas/SearchFacetsDto"
           }
@@ -1979,6 +1983,7 @@
           "limit",
           "total",
           "totalPages",
+          "degraded",
           "facets"
         ]
       },
@@ -2027,6 +2032,10 @@
               "$ref": "#/components/schemas/ProductListItemDto"
             }
           },
+          "degraded": {
+            "type": "boolean",
+            "description": "Search engine unavailable: `products` is empty, categories and brands still match."
+          },
           "categories": {
             "description": "Up to 5 visible categories whose name contains the query.",
             "type": "array",
@@ -2046,6 +2055,7 @@
           "locale",
           "query",
           "products",
+          "degraded",
           "categories",
           "brands"
         ]

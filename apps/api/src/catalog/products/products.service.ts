@@ -69,11 +69,22 @@ const GALLERY_ORDER = [
 
 const ACTIVE_VARIANTS = { status: 'ACTIVE' } satisfies Prisma.ProductVariantWhereInput;
 
+/** SQL listing filter; a flag left `undefined` does not filter. */
+export interface SqlListFilter {
+  /** A category with its visible subtree. */
+  categoryIds?: string[];
+  /** Active brands (any of). */
+  brandIds?: string[];
+  sale?: boolean;
+  antidron?: boolean;
+  inStock?: boolean;
+}
+
 /**
  * Public product reads (§6, §7). Visibility = `isPublished`; prices and stock always come from
  * PricingService / InventoryService, never from product rows.
- * The listing is the SQL path (category/brand, newest first); faceted filtering and sorting by
- * price go through Meilisearch (7.4), and this path stays as its fallback.
+ * The listing is the SQL path (newest first): storefront listings go through Meilisearch
+ * (`GET /search`, 7.4), which falls back to `listByFilter()` when search is unavailable.
  */
 @Injectable()
 export class ProductsService {
@@ -87,15 +98,11 @@ export class ProductsService {
   ) {}
 
   async list(locale: string, query: ProductListQueryDto): Promise<ProductListDto> {
-    const where: Prisma.ProductWhereInput = {
-      isPublished: true,
-      isSale: query.sale,
-      isAntidron: query.antidron,
-    };
+    const filter: SqlListFilter = { sale: query.sale, antidron: query.antidron };
     if (query.category) {
       const ids = await this.categories.subtreeIds(query.category);
       if (!ids) throw notFound('Category not found');
-      where.categories = { some: { categoryId: { in: ids } } };
+      filter.categoryIds = ids;
     }
     if (query.brand) {
       const brand = await this.prisma.brand.findUnique({
@@ -103,8 +110,36 @@ export class ProductsService {
         select: { id: true, isActive: true },
       });
       if (!brand?.isActive) throw notFound('Brand not found');
-      where.brandId = brand.id;
+      filter.brandIds = [brand.id];
     }
+    return this.listByFilter(locale, filter, query.page, query.limit);
+  }
+
+  /** Published products matching `filter`, newest first. Ids must already be resolved and visible. */
+  async listByFilter(
+    locale: string,
+    filter: SqlListFilter,
+    page: number,
+    limit: number,
+  ): Promise<ProductListDto> {
+    const where: Prisma.ProductWhereInput = {
+      isPublished: true,
+      isSale: filter.sale,
+      isAntidron: filter.antidron,
+      ...(filter.categoryIds && {
+        categories: { some: { categoryId: { in: filter.categoryIds } } },
+      }),
+      ...(filter.brandIds && { brandId: { in: filter.brandIds } }),
+      // Same rule as InventoryService: an active variant with sellable stock in an active warehouse.
+      ...(filter.inStock && {
+        variants: {
+          some: {
+            ...ACTIVE_VARIANTS,
+            inventory: { some: { available: { gt: 0 }, warehouse: { isActive: true } } },
+          },
+        },
+      }),
+    };
 
     const langs = await this.langs(locale);
     const [total, rows] = await Promise.all([
@@ -112,8 +147,8 @@ export class ProductsService {
       this.prisma.product.findMany({
         where,
         orderBy: [{ publishedAt: { sort: 'desc', nulls: 'last' } }, { id: 'desc' }],
-        skip: (query.page - 1) * query.limit,
-        take: query.limit,
+        skip: (page - 1) * limit,
+        take: limit,
         select: {
           id: true,
           slug: true,
@@ -161,10 +196,10 @@ export class ProductsService {
     return {
       locale,
       items,
-      page: query.page,
-      limit: query.limit,
+      page,
+      limit,
       total,
-      totalPages: Math.ceil(total / query.limit),
+      totalPages: Math.ceil(total / limit),
     };
   }
 

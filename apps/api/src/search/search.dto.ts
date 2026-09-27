@@ -191,6 +191,11 @@ export class SearchResultDto {
   /** Exact up to 10 000. */
   total: number;
   totalPages: number;
+  /**
+   * Search engine unavailable: browsing fell back to SQL (newest first; category, brand, flags
+   * and stock honoured; price/attribute filters, sorting and facet counts are not).
+   */
+  degraded: boolean;
   facets: SearchFacetsDto;
 }
 
@@ -224,6 +229,8 @@ export class SuggestResultDto {
   locale: string;
   query: string;
   products: ProductListItemDto[];
+  /** Search engine unavailable: `products` is empty, categories and brands still match. */
+  degraded: boolean;
   /** Up to 5 visible categories whose name contains the query. */
   categories: SuggestCategoryDto[];
   /** Up to 5 brands (with products) whose name contains the query. */

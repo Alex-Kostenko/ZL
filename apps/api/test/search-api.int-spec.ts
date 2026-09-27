@@ -282,9 +282,45 @@ describe('Search API (§12)', () => {
     expect(brands.body.brands).toEqual([{ slug: 'benelli', name: 'Benelli' }]);
   });
 
-  it('answers 503 when the index is not available', async () => {
-    await indexes.drop(indexes.uid('uk'));
-    const res = await request(app.getHttpServer()).get('/api/v1/search?q=a').expect(503);
-    expect(res.body.code).toBe('SERVICE_UNAVAILABLE');
+  it('is not degraded while search works', async () => {
+    expect((await search('category=zbroia')).degraded).toBe(false);
+  });
+
+  describe('when search is unavailable', () => {
+    beforeAll(() => indexes.drop(indexes.uid('uk')));
+
+    it('answers 503 to text search', async () => {
+      const res = await request(app.getHttpServer()).get('/api/v1/search?q=a').expect(503);
+      expect(res.body.code).toBe('SERVICE_UNAVAILABLE');
+    });
+
+    it('keeps browsing on the SQL path, newest first, without facets', async () => {
+      const all = await search('category=zbroia');
+      expect(all).toMatchObject({ degraded: true, total: 3, query: '' });
+      expect(slugs(all)).toEqual(['a400', 'silver', 'm2']);
+
+      const narrowed = await search('category=zbroia&brand=beretta,benelli&inStock=true&sale=true');
+      expect(slugs(narrowed)).toEqual(['m2']);
+      expect(narrowed.facets).toMatchObject({
+        attributes: [],
+        price: null,
+        inStock: { count: 0, selected: true },
+      });
+      expect(narrowed.facets.brands.map((b) => b.value)).toEqual(['benelli', 'beretta']);
+
+      expect((await search('brand=nemaie')).total).toBe(0);
+      await search('category=nemaie', 404);
+    });
+
+    it('still suggests categories and brands', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/api/v1/search/suggest?q=${encodeURIComponent('руш')}`)
+        .expect(200);
+      expect(res.body).toMatchObject({
+        degraded: true,
+        products: [],
+        categories: [{ path: 'zbroia/rushnytsi', name: 'Рушниці' }],
+      });
+    });
   });
 });

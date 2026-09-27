@@ -9,6 +9,7 @@ import { CacheService } from '../cache/cache.service';
 import { BrandsService } from '../catalog/brands/brands.service';
 import { CategoriesService } from '../catalog/categories/categories.service';
 import type { ProductListItemDto } from '../catalog/products/products.dto';
+import { ProductsService } from '../catalog/products/products.service';
 import { AppException, ErrorCode } from '../common/errors';
 import { LocaleService } from '../i18n/locale.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -45,11 +46,14 @@ const FACET_ATTRIBUTES_KEY = 'search:facet-attributes';
 /** Attribute definitions change only in the admin, which calls `invalidateFacetCache()`. */
 const FACET_ATTRIBUTES_TTL_SECONDS = 10 * 60;
 const SUGGEST_GROUP_SIZE = 5;
+/** A slow search must not hold a storefront page: give up and degrade. */
+const SEARCH_TIMEOUT_MS = 2_000;
 
 /**
  * Storefront search and faceted browsing (§12) over the product indexes. Read-only: indexing is
- * `SearchIndexProcessor`'s job. When Meilisearch is unreachable the API answers 503
- * `SERVICE_UNAVAILABLE`; category listings fall back to SQL (7.4).
+ * `SearchIndexProcessor`'s job. The single listing endpoint of the storefront (category, brand,
+ * showcase and search pages). When Meilisearch is unavailable, browsing degrades to SQL and
+ * suggestions to categories/brands; only text search answers 503 `SERVICE_UNAVAILABLE`.
  */
 @Injectable()
 export class SearchService {
@@ -63,6 +67,7 @@ export class SearchService {
     private readonly locales: LocaleService,
     private readonly categories: CategoriesService,
     private readonly brands: BrandsService,
+    private readonly products: ProductsService,
   ) {}
 
   async search(locale: string, query: SearchQueryDto): Promise<SearchResultDto> {
@@ -109,29 +114,38 @@ export class SearchService {
 
     const q = query.q?.trim() ?? '';
     const indexUid = this.indexes.uid(locale);
-    const { results } = await this.call(() =>
-      this.meili.multiSearch<{ queries: MultiSearchQuery[] }, ProductDocument>({
-        queries: [
-          {
-            indexUid,
-            q,
-            filter: main.filter,
-            facets: main.facets,
-            sort: SORT[query.sort],
-            page: query.page,
-            hitsPerPage: query.limit,
-          },
-          ...disjunctive.map((d) => ({
-            indexUid,
-            q,
-            filter: d.filter,
-            facets: d.facets,
-            limit: 0,
-          })),
-        ],
-      }),
+    const response = await this.read((signal) =>
+      this.meili.multiSearch<{ queries: MultiSearchQuery[] }, ProductDocument>(
+        {
+          queries: [
+            {
+              indexUid,
+              q,
+              filter: main.filter,
+              facets: main.facets,
+              sort: SORT[query.sort],
+              page: query.page,
+              hitsPerPage: query.limit,
+            },
+            ...disjunctive.map((d) => ({
+              indexUid,
+              q,
+              filter: d.filter,
+              facets: d.facets,
+              limit: 0,
+            })),
+          ],
+        },
+        { signal },
+      ),
     );
+    if (!response) {
+      // Browsing (no text) survives a search outage on the SQL path; text search cannot.
+      if (q) throw unavailable();
+      return this.fallback(locale, query, input);
+    }
 
+    const { results } = response;
     const [first] = results;
     const facetData: FacetResults = { distribution: {}, stats: {} };
     for (const r of results) {
@@ -149,6 +163,7 @@ export class SearchService {
       limit: query.limit,
       total,
       totalPages: Math.ceil(total / query.limit),
+      degraded: false,
       facets: buildFacets({
         locale,
         fallback: defaultLocale,
@@ -166,10 +181,10 @@ export class SearchService {
     const rank = nameMatchRank(q, locale);
 
     const [products, categories, brands] = await Promise.all([
-      this.call(() =>
+      this.read((signal) =>
         this.meili
           .index<ProductDocument>(this.indexes.uid(locale))
-          .search(q, { limit: query.limit }),
+          .search(q, { limit: query.limit }, { signal }),
       ),
       this.categories.localized(locale),
       this.brands.list(locale),
@@ -178,7 +193,8 @@ export class SearchService {
     return {
       locale,
       query: q,
-      products: products.hits.map(toListItem),
+      products: products?.hits.map(toListItem) ?? [],
+      degraded: products === null,
       categories: bestMatches(
         categories,
         (c) => rank(c.name),
@@ -229,23 +245,79 @@ export class SearchService {
     return new Map(items.map((b) => [b.slug, b.name]));
   }
 
-  /** Meilisearch down or index not built yet → 503; anything else is a bug → 500. */
-  private async call<T>(fn: () => Promise<T>): Promise<T> {
+  /**
+   * SQL listing when Meilisearch is unavailable (`ProductsService.listByFilter`): category,
+   * brands, showcase flags and stock are honoured; price/attribute filters, sorting and facets
+   * are not (newest first). Marked `degraded` so the storefront can hide the filter panel.
+   */
+  private async fallback(
+    locale: string,
+    query: SearchQueryDto,
+    input: SearchFilterInput,
+  ): Promise<SearchResultDto> {
+    const [categoryIds, brandIds, { defaultLocale }] = await Promise.all([
+      query.category ? this.categories.subtreeIds(query.category) : undefined,
+      input.brands
+        ? this.prisma.brand
+            .findMany({
+              where: { slug: { in: input.brands }, isActive: true },
+              select: { id: true },
+            })
+            .then((rows) => rows.map((r) => r.id))
+        : undefined,
+      this.locales.settings(),
+    ]);
+    const list = await this.products.listByFilter(
+      locale,
+      {
+        categoryIds: categoryIds ?? undefined,
+        brandIds,
+        sale: query.sale || undefined,
+        antidron: query.antidron || undefined,
+        inStock: query.inStock || undefined,
+      },
+      query.page,
+      query.limit,
+    );
+    return {
+      ...list,
+      query: '',
+      degraded: true,
+      facets: buildFacets({
+        locale,
+        fallback: defaultLocale,
+        input,
+        results: { distribution: {}, stats: {} },
+        attributes: [],
+        brandNames: new Map(),
+      }),
+    };
+  }
+
+  /**
+   * A Meilisearch read with a storefront-friendly timeout. `null` when search is unavailable
+   * (down, too slow, index not built yet); any other error is a bug and propagates (500).
+   */
+  private async read<T>(fn: (signal: AbortSignal) => Promise<T>): Promise<T | null> {
     try {
-      return await fn();
+      return await fn(AbortSignal.timeout(SEARCH_TIMEOUT_MS));
     } catch (err) {
       const unavailable =
         err instanceof MeilisearchError &&
         (!(err instanceof MeilisearchApiError) || err.cause?.code === 'index_not_found');
       if (!unavailable) throw err;
-      this.logger.warn(`Search unavailable: ${(err as Error).message}`);
-      throw new AppException(
-        ErrorCode.SERVICE_UNAVAILABLE,
-        'Search is temporarily unavailable',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      this.logger.warn(`Search unavailable: ${err.message}`);
+      return null;
     }
   }
+}
+
+function unavailable(): AppException {
+  return new AppException(
+    ErrorCode.SERVICE_UNAVAILABLE,
+    'Search is temporarily unavailable',
+    HttpStatus.SERVICE_UNAVAILABLE,
+  );
 }
 
 /** A search hit is exactly the listing tile (`DISPLAYED_ATTRIBUTES`). */
