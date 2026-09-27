@@ -46,6 +46,8 @@
   --accent-foreground: var(--ink);
   --destructive: var(--terracotta);
   --destructive-foreground: #ffffff;
+  /* Sale/promo text (nav "Розпродаж", discounts); fills use raw terracotta. */
+  --promo: var(--terracotta);
   --border: #d6d3ca;
   --input: #d6d3ca;
   --ring: var(--steel);
@@ -78,6 +80,7 @@
   --accent-foreground: #f5f3ee;
   --destructive: #b85a40;
   --destructive-foreground: #ffffff;
+  --promo: #d4785d;
   --border: #2e3431;
   --input: #3a403d;
   --ring: #6d9aaf;
@@ -115,6 +118,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-promo: var(--promo);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

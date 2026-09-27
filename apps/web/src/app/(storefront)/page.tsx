@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@ml/ui/components/card
 import { Input } from '@ml/ui/components/input';
 import { Label } from '@ml/ui/components/label';
 import { Search } from 'lucide-react';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { api } from '@/lib/api';
 
 // Rendered per request: the API is not reachable at build time (CI, Docker build).
@@ -39,11 +38,7 @@ export default async function HomePage() {
   const status = await getApiStatus();
 
   return (
-    <main>
-      <div className="container-page flex h-14 items-center justify-between">
-        <span className="font-serif text-lg font-bold text-heading">Мисливська лавка</span>
-        <ThemeToggle />
-      </div>
+    <>
       <section className="bg-hero text-white">
         <div className="container-page section">
           <p className="eyebrow">Полювання · Риболовля · Туризм</p>
@@ -133,6 +128,6 @@ export default async function HomePage() {
           )}
         </Card>
       </div>
-    </main>
+    </>
   );
 }
